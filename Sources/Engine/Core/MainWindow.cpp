@@ -136,14 +136,13 @@ void MainWindow::Run() {
 }
 
 void MainWindow::Render() {
-    // Простое окно ImGui
-    ImGui::Begin("Main Window");
-    ImGui::Text("RatingDay Application");
-    ImGui::Text("This is a sample window.");
-    if (ImGui::Button("Close")) {
-        m_bRunning = false;
+    for (const auto& window : _windows) {
+        if (window) {
+            ImGui::Begin(window->GetName().c_str());
+            window->Render();
+            ImGui::End();
+        }
     }
-    ImGui::End();
 }
 
 void MainWindow::Shutdown() {
@@ -234,3 +233,20 @@ void MainWindow::CleanupDeviceWGL() {
     }
 }
 
+void MainWindow::AddWindow(Window::Uptr&& window)
+{
+    if (window) {
+        _windows.emplace_back(std::move(window));
+    }
+}
+
+void MainWindow::RemoveWindow(std::string_view nameWindow)
+{
+    const auto it = std::find_if(_windows.begin(), _windows.end(), [nameWindow](const auto& window) {
+        return window->GetName() == nameWindow;
+    });
+
+    if (it != _windows.end()) {
+        _windows.erase(it);
+    }
+}

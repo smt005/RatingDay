@@ -2,6 +2,30 @@
 
 #include <windows.h>
 #include <GL/gl.h>
+#include <string>
+#include <vector>
+#include <memory>
+
+class Window {
+public:
+    using Uptr = std::unique_ptr<Window>;
+
+public:
+    Window() = delete;
+    Window(std::string_view name)
+        : _name(name)
+    {};
+
+    virtual ~Window() = default;
+    virtual void Render() = 0;
+
+    const std::string& GetName() const {
+        return _name;
+    }
+
+private:
+    const std::string _name;
+};
 
 class MainWindow {
 public:
@@ -11,6 +35,19 @@ public:
     bool Initialize();
     void Run();
     void Shutdown();
+
+public:
+    void AddWindow(Window::Uptr&& window);
+    void RemoveWindow(std::string_view nameWindow);
+
+private:
+    bool CreateDeviceWGL();
+    void CleanupDeviceWGL();
+
+    void ProcessMessages();
+    void Render();
+
+    static LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 private:
     HWND m_hWnd;
@@ -26,11 +63,6 @@ private:
         HDC hDC;
     } m_wglData;
 
-    bool CreateDeviceWGL();
-    void CleanupDeviceWGL();
-
-    static LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    void ProcessMessages();
-    void Render();
+    std::vector<Window::Uptr> _windows;
 };
 
