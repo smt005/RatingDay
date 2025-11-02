@@ -1,38 +1,25 @@
 
+#include <Windows.h>
 #include <iostream>
 #include <imgui.h>
-#include "MainWindow.h"
-
-class FirstWindow : public Window
-{
-public:
-    FirstWindow()
-        : Window("FirstWindow")
-    {}
-    FirstWindow(std::string_view name)
-        : Window(name)
-    {}
-
-    void Render() override {
-        ImGui::Text("RatingDay Application");
-        ImGui::Text("This is a sample window.");
-        if (ImGui::Button("Close")) {
-            std::cout << "Is " << GetName() << " window" << std::endl;
-        }
-    };
-};
+#include <MainWindow.h>
+#include "CalendarWindow.h"
+#include "Data.h"
 
 int main() {
+    FreeConsole();
+
     MainWindow window;
-    
     if (!window.Initialize()) {
         std::cerr << "Failed to initialize window!" << std::endl;
         return 1;
     }
 
-    window.AddWindow(std::make_unique<FirstWindow>());
-    window.AddWindow(std::make_unique<FirstWindow>("SecondWindow"));
+    Data data("Test");;
+    window.AddWindow(std::make_unique<CalendarWindow>(data));
 
     window.Run();
+    data.Save();
+
     return 0;
 }

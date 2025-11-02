@@ -5,6 +5,12 @@ project(core)
 set(CORE_SOURCES
     MainWindow.cpp
     MainWindow.h
+	Log.h
+	LogSpecification.h
+	Help.h
+	Help.cpp
+	FileManager.h
+	FileManager.cpp
 )
 
 # Создание библиотеки Core
