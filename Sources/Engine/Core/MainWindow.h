@@ -8,12 +8,14 @@
 
 class Window {
 public:
-    using Uptr = std::unique_ptr<Window>;
+    using Ptr = std::shared_ptr<Window>;
+    using Wptr = std::weak_ptr<Window>;
 
 public:
     Window() = delete;
     Window(std::string_view name)
         : _name(name)
+        , _visible(true)
     {};
 
     virtual ~Window() = default;
@@ -23,8 +25,17 @@ public:
         return _name;
     }
 
+    bool IsVisible() const {
+        return _visible;
+    }
+
+    void SetVisible(bool visible) {
+        _visible = visible;
+    }
+
 private:
     const std::string _name;
+    bool _visible;
 };
 
 class MainWindow {
@@ -37,7 +48,7 @@ public:
     void Shutdown();
 
 public:
-    void AddWindow(Window::Uptr&& window);
+    Window::Wptr AddWindow(Window::Ptr window);
     void RemoveWindow(std::string_view nameWindow);
 
 private:
@@ -63,6 +74,6 @@ private:
         HDC hDC;
     } m_wglData;
 
-    std::vector<Window::Uptr> _windows;
+    std::vector<Window::Ptr> _windows;
 };
 

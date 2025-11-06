@@ -14,10 +14,17 @@ add_subdirectory(Engine)
 # Источники программы
 set(PROGRAM_SOURCES
     Program/Main.cpp
-    Program/CalendarWindow.h
-    Program/CalendarWindow.cpp
 	Program/DataManager.h
 	Program/DataManager.cpp
+    Program/RatingWindow.h
+    Program/RatingWindow.cpp
+    Program/StatisticsWindow.h
+    Program/StatisticsWindow.cpp
+    Program/CalendarWindow.h
+    Program/CalendarWindow.cpp
+    Program/SelectorWindow.h
+    Program/SelectorWindow.cpp
+    
 )
 
 # Заголовочные файлы ImGui

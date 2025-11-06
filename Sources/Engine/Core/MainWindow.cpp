@@ -137,7 +137,7 @@ void MainWindow::Run() {
 
 void MainWindow::Render() {
     for (const auto& window : _windows) {
-        if (window) {
+        if (window && window->IsVisible()) {
             ImGui::Begin(window->GetName().c_str());
             window->Render();
             ImGui::End();
@@ -233,11 +233,13 @@ void MainWindow::CleanupDeviceWGL() {
     }
 }
 
-void MainWindow::AddWindow(Window::Uptr&& window)
+Window::Wptr MainWindow::AddWindow(Window::Ptr window)
 {
-    if (window) {
-        _windows.emplace_back(std::move(window));
+    if (!window) {
+        return {};
     }
+    
+    return _windows.emplace_back(std::move(window));
 }
 
 void MainWindow::RemoveWindow(std::string_view nameWindow)

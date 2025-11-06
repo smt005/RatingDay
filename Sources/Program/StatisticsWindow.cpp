@@ -1,20 +1,18 @@
 
-#include "CalendarWindow.h"
+#include "StatisticsWindow.h"
 #include <iostream>
 #include <imgui.h>
 #include <Log.h>
 #include "DataManager.h"
 
-//std::vector<std::string> CalendarWindow::_days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-
-CalendarWindow::CalendarWindow(DataManager::Ptr dataManager)
-    : Window("CalendarWindow")
+StatisticsWindow::StatisticsWindow(DataManager::Ptr dataManager)
+    : Window("StatisticsWindow")
     , _dataManager(dataManager)
 {
     MakeUi();
 }
 
-void CalendarWindow::Render() {
+void StatisticsWindow::Render() {
     ImGui::Text(TO_STRING("Day: {} '{}'", _dayTimeStr, GetName()).c_str());
 
     int guiId = 0;
@@ -64,7 +62,7 @@ void CalendarWindow::Render() {
     }
 };
 
-void CalendarWindow::MakeUi()
+void StatisticsWindow::MakeUi()
 {
     DataManager::DayTime dayTime = DataManager::CurrentTime();
     _dayTimeStr = TO_STRING("Day: {} {} {}", dayTime.day, dayTime.month, dayTime.year);
