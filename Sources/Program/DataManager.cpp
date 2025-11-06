@@ -1,0 +1,95 @@
+
+#include "DataManager.h"
+#include <chrono>
+#include <ctime>
+#include <Help.h>
+#include <Log.h>
+
+DataManager::DataManager(std::string_view name)
+{
+	_fileNamePath = TO_STRING("{}.json", name);
+	Load();
+}
+
+DataManager::DayTime DataManager::CurrentTime()
+{
+	const auto nowTime = std::chrono::system_clock::now();
+	std::time_t time = std::chrono::system_clock::to_time_t(nowTime);
+	std::tm* currentTime = std::localtime(&time);
+
+	return { currentTime->tm_mday, 1 + currentTime->tm_mon, 1900 + currentTime->tm_year };
+}
+
+bool DataManager::Load()
+{
+	return help::loadJson(_fileNamePath, _value);
+}
+
+bool DataManager::Save() const
+{
+	return help::saveJson(_fileNamePath, _value);
+}
+
+DataManager::Day DataManager::GetRating(DayTime time) const
+{
+	Day ratingsDay;
+
+	const std::string yearKey = TO_STRING("{}", time.year);
+	const std::string montKey = TO_STRING("{}", time.month);
+	const std::string dayKey = TO_STRING("{}", time.day);
+
+	const auto ratingsValue = _value[yearKey][montKey][dayKey];
+	if (ratingsValue.isNull() || !ratingsValue.isArray()) {
+		return ratingsDay;
+	}
+	
+	for (const auto& ratingValue : ratingsValue) {
+		const auto idValue = ratingValue["id"];
+		if (idValue.isNull() && !idValue.isInt()) {
+			continue;
+		}
+
+		const auto rateValue = ratingValue["rate"];
+		if (rateValue.isNull() && !rateValue.isInt()) {
+			continue;
+		}
+
+		RatingData& ratingData = ratingsDay.emplace_back();
+
+		ratingData.id = idValue.asInt();
+		ratingData.rate = rateValue.asInt();
+
+		const auto descriptionValue = ratingValue["des"];
+		if (!descriptionValue.isNull() && descriptionValue.isString()) {
+			ratingData.description = descriptionValue.asCString();
+		}
+	}
+
+	return ratingsDay;
+}
+
+void DataManager::SetRating(DayTime time, const Day& ratingsDay)
+{
+	if (ratingsDay.empty()) {
+		return;
+	}
+
+	const std::string yearKey = TO_STRING("{}", time.year);
+	const std::string montKey = TO_STRING("{}", time.month);
+	const std::string dayKey = TO_STRING("{}", time.day);
+
+	auto& ratingsValue = _value[yearKey][montKey][dayKey];
+
+	for (const auto& rating : ratingsDay) {
+		Json::Value ratingValue;
+
+		ratingValue["id"] = rating.id;
+		ratingValue["rate"] = rating.rate;
+
+		if (!rating.description.empty()) {
+			ratingValue["des"] = rating.description;
+		}
+
+		ratingsValue.append(ratingValue);
+	}
+}

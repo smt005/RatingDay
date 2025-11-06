@@ -1,13 +1,13 @@
 
-#include <Windows.h>
+//#include <Windows.h>
 #include <iostream>
 #include <imgui.h>
 #include <MainWindow.h>
 #include "CalendarWindow.h"
-#include "Data.h"
+#include "DataManager.h"
 
 int main() {
-    FreeConsole();
+    //FreeConsole();
 
     MainWindow window;
     if (!window.Initialize()) {
@@ -15,11 +15,11 @@ int main() {
         return 1;
     }
 
-    Data data("Test");;
-    window.AddWindow(std::make_unique<CalendarWindow>(data));
+    DataManager::Ptr dataManager = std::make_shared<DataManager> ("Test");
+    window.AddWindow(std::make_unique<CalendarWindow>(dataManager));
 
     window.Run();
-    data.Save();
+    dataManager->Save();
 
     return 0;
 }

@@ -1,9 +1,10 @@
 #include <MainWindow.h>
 #include <string>
 #include <vector>
+#include <memory>
 #include <unordered_map>
 
-class Data;
+class DataManager;
 
 class CalendarWindow final : public Window {
 private:
@@ -12,15 +13,20 @@ private:
 		char chars[size];
 	};
 
+	struct Element {
+		TextData id;
+		TextData rate;
+		TextData description;
+	};
+
 public:
-	CalendarWindow(Data& data);	
+	CalendarWindow(std::shared_ptr<DataManager> data);
 	void Render() override;
 	void MakeUi();
 
 private:
-	Data& _data;
-	std::unordered_map<std::string_view, TextData> _texts;
-
-private:
-	static std::vector<std::string> _days;
+	std::shared_ptr<DataManager> _dataManager;
+	std::string _dayTimeStr;
+	Element* _editElement = nullptr;
+	std::vector<Element> _texts;
 };
