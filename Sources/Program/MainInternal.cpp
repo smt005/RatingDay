@@ -1,6 +1,4 @@
 
-//#include <Windows.h>
-#include <iostream>
 #include <imgui.h>
 #include <MainWindow.h>
 #include "CalendarWindow.h"
@@ -9,15 +7,7 @@
 #include "SelectorWindow.h"
 #include "DataManager.h"
 
-int main() {
-    //FreeConsole();
-
-    MainWindow window;
-    if (!window.Initialize()) {
-        std::cerr << "Failed to initialize window!" << std::endl;
-        return 1;
-    }
-
+int MainInternal(MainWindow& window) {
     DataManager::Ptr dataManager = std::make_shared<DataManager> ("Test");
     std::vector<Window::Wptr> windows;
 

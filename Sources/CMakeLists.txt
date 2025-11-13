@@ -50,9 +50,11 @@ set(JSONCPP_HEADERS
 )
 
 # Создание исполняемого файла
-add_executable(${PROJECT_NAME} ${PROGRAM_SOURCES} ${IMGUI_HEADERS} ${JSONCPP_HEADERS})
+add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/Engine/Platforms/Win32/main.cpp ${PROGRAM_SOURCES} ${IMGUI_HEADERS} ${JSONCPP_HEADERS})
 
-# ЗАпускаемый проект
+include_directories(${PROGRAM_SOURCES})
+
+# Запускаемый проект
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 
 # Связывание с библиотеками
