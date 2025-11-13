@@ -1,14 +1,13 @@
 
-//#include <Windows.h>
 #include <iostream>
-#include <MainWindow.h>
+#include <AppWindow.h>
 
-int MainInternal(MainWindow& window);
+int MainInternal(AppWindow& window);
 	
 int main() {
     //FreeConsole();
     
-    MainWindow window;
+    AppWindow window;
     if (!window.Initialize()) {
         std::cerr << "Failed to initialize window!" << std::endl;
         return 1;

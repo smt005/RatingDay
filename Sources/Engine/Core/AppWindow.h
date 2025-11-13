@@ -1,7 +1,5 @@
 #pragma once
 
-#include <windows.h>
-#include <GL/gl.h>
 #include <string>
 #include <vector>
 #include <memory>
@@ -38,10 +36,10 @@ private:
     bool _visible;
 };
 
-class MainWindow {
+class AppWindow {
 public:
-    MainWindow();
-    ~MainWindow();
+    AppWindow();
+    ~AppWindow();
 
     bool Initialize();
     void Run();
@@ -58,22 +56,13 @@ private:
     void ProcessMessages();
     void Render();
 
-    static LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+public:
+    bool m_bRunning = false;
+    bool m_bFullscreen = true;
+    int m_width = 1280;
+    int m_height = 800;
 
 private:
-    HWND m_hWnd;
-    bool m_bRunning;
-
-    // OpenGL
-    HDC m_hDC;
-    HGLRC m_hRC;
-    int m_width;
-    int m_height;
-
-    struct WGL_WindowData {
-        HDC hDC;
-    } m_wglData;
-
     std::vector<Window::Ptr> _windows;
 };
 

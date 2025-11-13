@@ -1,4 +1,4 @@
-#include <MainWindow.h>
+#include <AppWindow.h>
 #include <vector>
 
 class SelectorWindow final : public Window {

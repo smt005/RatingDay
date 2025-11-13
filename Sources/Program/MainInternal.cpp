@@ -1,13 +1,13 @@
 
 #include <imgui.h>
-#include <MainWindow.h>
+#include <AppWindow.h>
 #include "CalendarWindow.h"
 #include "RatingWindow.h"
 #include "StatisticsWindow.h"
 #include "SelectorWindow.h"
 #include "DataManager.h"
 
-int MainInternal(MainWindow& window) {
+int MainInternal(AppWindow& window) {
     DataManager::Ptr dataManager = std::make_shared<DataManager> ("Test");
     std::vector<Window::Wptr> windows;
 

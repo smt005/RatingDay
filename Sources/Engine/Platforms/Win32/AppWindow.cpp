@@ -1,28 +1,42 @@
-#include "MainWindow.h"
+
+#include "AppWindow.h"
+#include <windows.h>
+#include <GL/gl.h>
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_opengl3.h"
-#include <windows.h>
-#include <GL/gl.h>
 
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-MainWindow::MainWindow() 
-    : m_hWnd(nullptr)
-    , m_bRunning(false)
-    , m_hDC(nullptr)
-    , m_hRC(nullptr)
-    , m_width(1280)
-    , m_height(800)
+HWND m_hWnd;
+bool m_bRunning;
+
+// OpenGL
+HDC m_hDC;
+HGLRC m_hRC;
+int m_width;
+int m_height;
+bool m_bFullscreen;
+
+struct WGL_WindowData {
+    HDC hDC;
+} m_wglData;
+
+AppWindow::AppWindow() 
 {
+    m_hWnd = nullptr;
+    m_bRunning = false;
+    m_hDC = nullptr;
+    m_hRC = nullptr;
 }
 
-MainWindow::~MainWindow() {
+AppWindow::~AppWindow() {
     Shutdown();
 }
 
-bool MainWindow::Initialize() {
+bool AppWindow::Initialize() {
     // Включение DPI awareness
     //ImGui_ImplWin32_EnableDpiAwareness(); // FIXME: Doesn't work with Win32+OpenGL
 
@@ -94,7 +108,7 @@ bool MainWindow::Initialize() {
     return true;
 }
 
-void MainWindow::Run() {
+void AppWindow::Run() {
     MSG msg = {};
     while (m_bRunning) {
         // Обработка сообщений Windows
@@ -135,17 +149,54 @@ void MainWindow::Run() {
     }
 }
 
-void MainWindow::Render() {
+void AppWindow::Render() {
+    bool ratingWindowVisible = false;
+    
     for (const auto& window : _windows) {
         if (window && window->IsVisible()) {
-            ImGui::Begin(window->GetName().c_str());
+            if (window->GetName() == "RatingWindow") {
+                ratingWindowVisible = true;
+                // Полноэкранное окно без заголовка
+                ImGui::SetNextWindowPos(ImVec2(0, 0));
+                ImGui::SetNextWindowSize(ImVec2(static_cast<float>(m_width), static_cast<float>(m_height)));
+                ImGui::Begin(window->GetName().c_str(), nullptr, 
+                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | 
+                    ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | 
+                    ImGuiWindowFlags_NoBringToFrontOnFocus);
+            } else {
+                ImGui::Begin(window->GetName().c_str());
+            }
             window->Render();
             ImGui::End();
         }
     }
+    
+    // Установка главного окна в полноэкранный режим без заголовка, если RatingWindow видим
+    if (ratingWindowVisible && !m_bFullscreen) {
+        // Переход в полноэкранный режим без заголовка
+        MONITORINFO monitorInfo = { sizeof(monitorInfo) };
+        ::GetMonitorInfo(::MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTONEAREST), &monitorInfo);
+        
+        // Устанавливаем стиль без рамки и заголовка
+        ::SetWindowLongPtrW(m_hWnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+        ::SetWindowPos(m_hWnd, HWND_TOP,
+            monitorInfo.rcMonitor.left,
+            monitorInfo.rcMonitor.top,
+            monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left,
+            monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top,
+            SWP_FRAMECHANGED | SWP_NOZORDER);
+        
+        m_bFullscreen = true;
+    } else if (!ratingWindowVisible && m_bFullscreen) {
+        // Восстанавливаем обычный режим, если RatingWindow не видим
+        ::SetWindowLongPtrW(m_hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
+        ::SetWindowPos(m_hWnd, HWND_TOP, 100, 100, 1280, 800, SWP_FRAMECHANGED | SWP_NOZORDER);
+        
+        m_bFullscreen = false;
+    }
 }
 
-void MainWindow::Shutdown() {
+void AppWindow::Shutdown() {
     if (m_hWnd != nullptr) {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplWin32_Shutdown();
@@ -161,14 +212,15 @@ void MainWindow::Shutdown() {
     }
 }
 
-LRESULT WINAPI MainWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-    MainWindow* pThis = nullptr;
+//LRESULT WINAPI AppWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    AppWindow* pThis = nullptr;
     if (msg == WM_NCCREATE) {
         CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
-        pThis = reinterpret_cast<MainWindow*>(pCreate->lpCreateParams);
+        pThis = reinterpret_cast<AppWindow*>(pCreate->lpCreateParams);
         ::SetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
     } else {
-        pThis = reinterpret_cast<MainWindow*>(::GetWindowLongPtrW(hWnd, GWLP_USERDATA));
+        pThis = reinterpret_cast<AppWindow*>(::GetWindowLongPtrW(hWnd, GWLP_USERDATA));
     }
 
     if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
@@ -198,7 +250,7 @@ LRESULT WINAPI MainWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
 
-bool MainWindow::CreateDeviceWGL() {
+bool AppWindow::CreateDeviceWGL() {
     HDC hDc = ::GetDC(m_hWnd);
     PIXELFORMATDESCRIPTOR pfd = { 0 };
     pfd.nSize = sizeof(pfd);
@@ -225,7 +277,7 @@ bool MainWindow::CreateDeviceWGL() {
     return true;
 }
 
-void MainWindow::CleanupDeviceWGL() {
+void AppWindow::CleanupDeviceWGL() {
     wglMakeCurrent(nullptr, nullptr);
     if (m_wglData.hDC) {
         ::ReleaseDC(m_hWnd, m_wglData.hDC);
@@ -233,7 +285,7 @@ void MainWindow::CleanupDeviceWGL() {
     }
 }
 
-Window::Wptr MainWindow::AddWindow(Window::Ptr window)
+Window::Wptr AppWindow::AddWindow(Window::Ptr window)
 {
     if (!window) {
         return {};
@@ -242,7 +294,7 @@ Window::Wptr MainWindow::AddWindow(Window::Ptr window)
     return _windows.emplace_back(std::move(window));
 }
 
-void MainWindow::RemoveWindow(std::string_view nameWindow)
+void AppWindow::RemoveWindow(std::string_view nameWindow)
 {
     const auto it = std::find_if(_windows.begin(), _windows.end(), [nameWindow](const auto& window) {
         return window->GetName() == nameWindow;

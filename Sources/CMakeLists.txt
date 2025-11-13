@@ -50,7 +50,7 @@ set(JSONCPP_HEADERS
 )
 
 # Создание исполняемого файла
-add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/Engine/Platforms/Win32/main.cpp ${PROGRAM_SOURCES} ${IMGUI_HEADERS} ${JSONCPP_HEADERS})
+add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/Engine/Platforms/Win32/main.cpp ${CMAKE_SOURCE_DIR}/Engine/Platforms/Win32/AppWindow.cpp ${PROGRAM_SOURCES} ${IMGUI_HEADERS} ${JSONCPP_HEADERS})
 
 include_directories(${PROGRAM_SOURCES})
 

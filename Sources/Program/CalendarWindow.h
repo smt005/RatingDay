@@ -1,4 +1,4 @@
-#include <MainWindow.h>
+#include <AppWindow.h>
 #include <string>
 #include <vector>
 #include <memory>

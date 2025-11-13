@@ -58,6 +58,7 @@ void RatingWindow::Render() {
             LOG("Add dayTime: {} {} {}", dayTime.year, dayTime.month, dayTime.day);
 
             _dataManager->SetRating(dayTime, day);
+            _editElement = nullptr;
         }
     }
 };
