@@ -7,8 +7,8 @@ int MainInternal(MainWindow& window);
 	
 int main() {
     //FreeConsole();
-    // 
-    // MainWindow window;
+    
+    MainWindow window;
     if (!window.Initialize()) {
         std::cerr << "Failed to initialize window!" << std::endl;
         return 1;
