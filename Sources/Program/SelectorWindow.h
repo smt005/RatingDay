@@ -1,13 +1,16 @@
+#pragma once
+
 #include <AppWindow.h>
 #include <vector>
+#include "ContentWindow.h"
 
 class SelectorWindow final : public Window {
 
 public:
-	SelectorWindow(std::vector<Window::Wptr>& windows);
+	SelectorWindow(std::vector<ContentWindow::Ptr>& windows);
 	void Render() override;
 
 private:
-	std::vector<Window::Wptr> _windows;
-	std::vector<Window::Wptr>::iterator _currentWindow;
+	std::vector<ContentWindow::Ptr> _windows;
+	std::vector<ContentWindow::Ptr>::iterator _currentWindow;
 };

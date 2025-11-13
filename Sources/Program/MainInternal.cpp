@@ -1,6 +1,7 @@
 
 #include <imgui.h>
 #include <AppWindow.h>
+#include "ContentWindow.h"
 #include "CalendarWindow.h"
 #include "RatingWindow.h"
 #include "StatisticsWindow.h"
@@ -9,23 +10,15 @@
 
 int MainInternal(AppWindow& window) {
     DataManager::Ptr dataManager = std::make_shared<DataManager> ("Test");
-    std::vector<Window::Wptr> windows;
+    std::vector<ContentWindow::Ptr> windows;
 
-    auto ratingWindow = window.AddWindow(std::make_shared<RatingWindow>(dataManager));
-    windows.emplace_back(ratingWindow);
-
-    auto statisticsWindow = window.AddWindow(std::make_shared<StatisticsWindow>(dataManager));
-    windows.emplace_back(statisticsWindow);
-    statisticsWindow.lock()->SetVisible(false);
-    
-    auto calendarWindow = window.AddWindow(std::make_shared<CalendarWindow>(dataManager));
-    windows.emplace_back(calendarWindow);
-    calendarWindow.lock()->SetVisible(false);
+    windows.emplace_back(std::make_shared<RatingWindow>(dataManager));
+    windows.emplace_back(std::make_shared<StatisticsWindow>(dataManager));
+    windows.emplace_back(std::make_shared<CalendarWindow>(dataManager));
 
     window.AddWindow(std::make_shared<SelectorWindow>(windows));
-
     window.Run();
-    dataManager->Save();
 
+    dataManager->Save();
     return 0;
 }

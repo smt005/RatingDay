@@ -1,12 +1,15 @@
+#pragma once
+
 #include <AppWindow.h>
 #include <string>
 #include <vector>
 #include <memory>
 #include <unordered_map>
+#include "ContentWindow.h"
 
 class DataManager;
 
-class RatingWindow final : public Window {
+class RatingWindow : public ContentWindow {
 private:
 	struct TextData {
 		inline static const size_t size = 128;

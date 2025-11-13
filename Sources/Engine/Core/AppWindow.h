@@ -30,10 +30,19 @@ public:
     void SetVisible(bool visible) {
         _visible = visible;
     }
+    
+    bool IsFullScreen() const {
+        return _fullScreen;
+    }
+
+    void SetFullScreen(bool fullScreen) {
+        _fullScreen = fullScreen;
+    }
 
 private:
     const std::string _name;
     bool _visible;
+    bool _fullScreen;
 };
 
 class AppWindow {

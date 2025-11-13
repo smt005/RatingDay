@@ -1,12 +1,14 @@
-#include <AppWindow.h>
+#pragma once
+
 #include <string>
 #include <vector>
 #include <memory>
 #include <unordered_map>
+#include "ContentWindow.h"
 
 class DataManager;
 
-class CalendarWindow final : public Window {
+class CalendarWindow final : public ContentWindow {
 private:
 	struct TextData {
 		inline static const size_t size = 128;

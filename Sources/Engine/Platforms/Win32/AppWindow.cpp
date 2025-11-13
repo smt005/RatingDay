@@ -37,9 +37,6 @@ AppWindow::~AppWindow() {
 }
 
 bool AppWindow::Initialize() {
-    // Включение DPI awareness
-    //ImGui_ImplWin32_EnableDpiAwareness(); // FIXME: Doesn't work with Win32+OpenGL
-
     // Регистрация класса окна (CS_OWNDC для OpenGL)
     WNDCLASSEXW wc = { 
         sizeof(wc), 
@@ -150,13 +147,9 @@ void AppWindow::Run() {
 }
 
 void AppWindow::Render() {
-    bool ratingWindowVisible = false;
-    
     for (const auto& window : _windows) {
         if (window && window->IsVisible()) {
-            if (window->GetName() == "RatingWindow") {
-                ratingWindowVisible = true;
-                // Полноэкранное окно без заголовка
+            if (window->IsFullScreen()) {
                 ImGui::SetNextWindowPos(ImVec2(0, 0));
                 ImGui::SetNextWindowSize(ImVec2(static_cast<float>(m_width), static_cast<float>(m_height)));
                 ImGui::Begin(window->GetName().c_str(), nullptr, 
@@ -169,30 +162,6 @@ void AppWindow::Render() {
             window->Render();
             ImGui::End();
         }
-    }
-    
-    // Установка главного окна в полноэкранный режим без заголовка, если RatingWindow видим
-    if (ratingWindowVisible && !m_bFullscreen) {
-        // Переход в полноэкранный режим без заголовка
-        MONITORINFO monitorInfo = { sizeof(monitorInfo) };
-        ::GetMonitorInfo(::MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTONEAREST), &monitorInfo);
-        
-        // Устанавливаем стиль без рамки и заголовка
-        ::SetWindowLongPtrW(m_hWnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
-        ::SetWindowPos(m_hWnd, HWND_TOP,
-            monitorInfo.rcMonitor.left,
-            monitorInfo.rcMonitor.top,
-            monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left,
-            monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top,
-            SWP_FRAMECHANGED | SWP_NOZORDER);
-        
-        m_bFullscreen = true;
-    } else if (!ratingWindowVisible && m_bFullscreen) {
-        // Восстанавливаем обычный режим, если RatingWindow не видим
-        ::SetWindowLongPtrW(m_hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
-        ::SetWindowPos(m_hWnd, HWND_TOP, 100, 100, 1280, 800, SWP_FRAMECHANGED | SWP_NOZORDER);
-        
-        m_bFullscreen = false;
     }
 }
 
@@ -284,6 +253,8 @@ void AppWindow::CleanupDeviceWGL() {
         m_wglData.hDC = nullptr;
     }
 }
+
+//........................................................................
 
 Window::Wptr AppWindow::AddWindow(Window::Ptr window)
 {

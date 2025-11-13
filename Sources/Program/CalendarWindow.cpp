@@ -3,19 +3,19 @@
 #include <iostream>
 #include <imgui.h>
 #include <Log.h>
+#include <Help.h>
 #include "DataManager.h"
 
 //std::vector<std::string> CalendarWindow::_days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 
 CalendarWindow::CalendarWindow(DataManager::Ptr dataManager)
-    : Window("CalendarWindow")
-    , _dataManager(dataManager)
+    : _dataManager(dataManager)
 {
     MakeUi();
 }
 
 void CalendarWindow::Render() {
-    ImGui::Text(TO_STRING("Day: {} '{}'", _dayTimeStr, GetName()).c_str());
+    ImGui::Text(TO_STRING("Day: {} '{}'", _dayTimeStr, help::GetClassName(this)).c_str());
 
     int guiId = 0;
     ImGui::Separator();

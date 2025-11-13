@@ -3,17 +3,17 @@
 #include <iostream>
 #include <imgui.h>
 #include <Log.h>
+#include <Help.h>
 #include "DataManager.h"
 
 StatisticsWindow::StatisticsWindow(DataManager::Ptr dataManager)
-    : Window("StatisticsWindow")
-    , _dataManager(dataManager)
+    : _dataManager(dataManager)
 {
     MakeUi();
 }
 
 void StatisticsWindow::Render() {
-    ImGui::Text(TO_STRING("Day: {} '{}'", _dayTimeStr, GetName()).c_str());
+    ImGui::Text(TO_STRING("Day: {} '{}'", _dayTimeStr, help::GetClassName(this)).c_str());
 
     int guiId = 0;
     ImGui::Separator();
