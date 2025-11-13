@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 4.2)
 
-project(RatingDay VERSION 1.0.0 LANGUAGES CXX)
+set(PROJECT_NAME RatingDay)
 
-set(CMAKE_CXX_STANDARD 17)
+project(${PROJECT_NAME} VERSION 1.0.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Установка пути для исполняемых файлов
@@ -11,21 +13,15 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../Execute)
 # Добавление подпроекта ImGui
 add_subdirectory(Engine)
 
-# Источники программы
-set(PROGRAM_SOURCES
-    Program/Main.cpp
-	Program/DataManager.h
-	Program/DataManager.cpp
-    Program/RatingWindow.h
-    Program/RatingWindow.cpp
-    Program/StatisticsWindow.h
-    Program/StatisticsWindow.cpp
-    Program/CalendarWindow.h
-    Program/CalendarWindow.cpp
-    Program/SelectorWindow.h
-    Program/SelectorWindow.cpp
-    
+# Укажите папку с исходниками
+set(SOURCES_DIR ${CMAKE_SOURCE_DIR}/Program)
+
+# Рекурсивно добавьте все файлы .cpp и .h из папки Sources
+file(GLOB_RECURSE PROGRAM_SOURCES
+    ${SOURCES_DIR}/*.cpp
+    ${SOURCES_DIR}/*.h
 )
+source_group(TREE ${SOURCES_DIR} TREE PREFIX "" FILES ${PROGRAM_SOURCES})
 
 # Заголовочные файлы ImGui
 set(IMGUI_HEADERS
@@ -55,6 +51,9 @@ set(JSONCPP_HEADERS
 
 # Создание исполняемого файла
 add_executable(${PROJECT_NAME} ${PROGRAM_SOURCES} ${IMGUI_HEADERS} ${JSONCPP_HEADERS})
+
+# ЗАпускаемый проект
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 
 # Связывание с библиотеками
 target_link_libraries(${PROJECT_NAME} PRIVATE core)

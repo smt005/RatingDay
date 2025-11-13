@@ -13,6 +13,12 @@ set(CORE_SOURCES
 	FileManager.cpp
 )
 
+file(GLOB_RECURSE CORE_SOURCES
+    ${CMAKE_SOURCE_DIR}/Engine/Core/*.cpp
+    ${CMAKE_SOURCE_DIR}/Engine/Core/*.h
+)
+source_group(TREE ${CMAKE_SOURCE_DIR}/Engine/Core TREE PREFIX "" FILES ${CORE_SOURCES})
+
 # Создание библиотеки Core
 add_library(core STATIC ${CORE_SOURCES})
 
