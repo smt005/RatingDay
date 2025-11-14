@@ -13,10 +13,19 @@ SelectorWindow::SelectorWindow(std::vector<ContentWindow::Ptr>& windows)
 {}
 
 void SelectorWindow::Render() {
+    static bool needBorder = false;
+    static const float border = 20.f;
+    static const float heightButtons = 40.f;
+    const float heightList = static_cast<float>(AppWindow::height) - heightButtons - border;
+    const float widthList = static_cast<float>(AppWindow::width) - border;
+
+    ImGui::BeginChild("List", { widthList, heightList }, needBorder);
+
     if (_currentWindow != _windows.end() && *_currentWindow) {
         (*_currentWindow)->Render();
     }
 
+    ImGui::EndChild();
     ImGui::Separator();
 
     if (ImGui::Button("<<", { 100.f, 30.f })) {
@@ -28,6 +37,12 @@ void SelectorWindow::Render() {
                 _currentWindow = std::prev(_windows.end());
             }
         }
+    }
+    
+    ImGui::SameLine();
+
+    if (ImGui::Button("<>", { 100.f, 30.f })) {
+        _currentWindow = _windows.begin();
     }
 
     ImGui::SameLine();

@@ -93,3 +93,24 @@ void DataManager::SetRating(DayTime time, const Day& ratingsDay)
 		ratingsValue.append(ratingValue);
 	}
 }
+
+std::unordered_map<int, std::string> DataManager::GetDescriptions() const
+{
+	std::unordered_map<int, std::string> descriptions;
+
+	const auto descriptionsValue = _value["Description"];
+	if (descriptionsValue.isNull() || !descriptionsValue.isObject()) {
+		return descriptions;
+	}
+
+	for (const auto& idStr : descriptionsValue.getMemberNames()) {
+		const auto descriptionValue = descriptionsValue[idStr];
+
+		if (!descriptionValue.isNull() && descriptionValue.isString()) {
+			const int id = std::stoi(idStr.c_str());
+			descriptions.emplace(id, descriptionValue.asCString());
+		}
+	}
+
+	return descriptions;
+}

@@ -68,8 +68,10 @@ private:
 public:
     bool m_bRunning = false;
     bool m_bFullscreen = true;
-    int m_width = 1280;
-    int m_height = 800;
+
+public:
+    static int width;
+    static int height;
 
 private:
     std::vector<Window::Ptr> _windows;

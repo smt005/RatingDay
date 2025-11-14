@@ -2,6 +2,7 @@
 
 #include <string>
 #include <memory>
+#include <unordered_map>
 #include <json/json.h>
 
 class DataManager final {
@@ -40,6 +41,8 @@ public:
 
 	Day GetRating(DayTime time) const;
 	void SetRating(DayTime time, const Day& ratingsDay);
+
+	std::unordered_map<int, std::string> GetDescriptions() const;
 
 private:
 	std::string _fileNamePath;

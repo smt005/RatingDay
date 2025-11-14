@@ -16,20 +16,13 @@ private:
 		char chars[size];
 	};
 
-	struct Element {
-		TextData id;
-		TextData rate;
-		TextData description;
-	};
-
 public:
 	RatingWindow(std::shared_ptr<DataManager> data);
 	void Render() override;
 	void MakeUi();
 
 private:
-	std::shared_ptr<DataManager> _dataManager;
 	std::string _dayTimeStr;
-	Element* _editElement = nullptr;
-	std::vector<Element> _texts;
+	std::shared_ptr<DataManager> _dataManager;
+	std::unordered_map<int, std::string> _descriptions;
 };

@@ -6,6 +6,9 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_opengl3.h"
 
+int AppWindow::width = 400;
+int AppWindow::height = 800;
+
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
  LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -16,8 +19,8 @@ bool m_bRunning;
 // OpenGL
 HDC m_hDC;
 HGLRC m_hRC;
-int m_width;
-int m_height;
+int width;
+int height;
 bool m_bFullscreen;
 
 struct WGL_WindowData {
@@ -59,8 +62,8 @@ bool AppWindow::Initialize() {
         wc.lpszClassName,
         L"RatingDay",
         WS_OVERLAPPEDWINDOW,
-        100, 100, 
-        1280, 800,
+        200, 100, 
+        600, 800,
         nullptr, 
         nullptr, 
         wc.hInstance, 
@@ -136,7 +139,7 @@ void AppWindow::Run() {
 
         // Завершение кадра
         ImGui::Render();
-        glViewport(0, 0, m_width, m_height);
+        glViewport(0, 0, width, height);
         glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -151,7 +154,7 @@ void AppWindow::Render() {
         if (window && window->IsVisible()) {
             if (window->IsFullScreen()) {
                 ImGui::SetNextWindowPos(ImVec2(0, 0));
-                ImGui::SetNextWindowSize(ImVec2(static_cast<float>(m_width), static_cast<float>(m_height)));
+                ImGui::SetNextWindowSize(ImVec2(static_cast<float>(width), static_cast<float>(height)));
                 ImGui::Begin(window->GetName().c_str(), nullptr, 
                     ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | 
                     ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | 
@@ -200,8 +203,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         switch (msg) {
         case WM_SIZE:
             if (wParam != SIZE_MINIMIZED) {
-                pThis->m_width = LOWORD(lParam);
-                pThis->m_height = HIWORD(lParam);
+                pThis->width = LOWORD(lParam);
+                pThis->height = HIWORD(lParam);
             }
             return 0;
         case WM_SYSCOMMAND:
