@@ -27,7 +27,18 @@ bool DataManager::Load()
 
 bool DataManager::Save() const
 {
+#ifdef _DEBUG
+	static bool compact = false;
+
+	if (compact) {
+		return help::saveJson(_fileNamePath, _value, "");
+	}
+	else {
+		return help::saveJson(_fileNamePath, _value);
+	}
+#else
 	return help::saveJson(_fileNamePath, _value);
+#endif
 }
 
 DataManager::Day DataManager::GetRating(DayTime time) const
@@ -44,7 +55,7 @@ DataManager::Day DataManager::GetRating(DayTime time) const
 	}
 	
 	for (const auto& idStr : dayValue.getMemberNames()) {
-		const auto& rateValue = dayValue[idStr]["rate"];
+		const auto& rateValue = dayValue[idStr]["r"];
 		if (rateValue.isNull() || !rateValue.isInt()) {
 			continue;
 		}
@@ -54,7 +65,7 @@ DataManager::Day DataManager::GetRating(DayTime time) const
 		ratingData.id = std::stoi(idStr.c_str());;
 		ratingData.rate = rateValue.asInt();
 
-		const auto& infoValue = dayValue[idStr]["info"];
+		const auto& infoValue = dayValue[idStr]["i"];
 		if (!infoValue.isNull() && infoValue.isString()) {
 			ratingData.description = infoValue.asString();
 		}
@@ -77,10 +88,10 @@ void DataManager::SetRating(DayTime time, const Day& ratingsDay)
 
 	for (const auto& rating : ratingsDay) {
 		Json::Value& ratingValue = ratingsValue[std::to_string(rating.id)];
-		ratingValue["rate"] = rating.rate;
+		ratingValue["r"] = rating.rate;
 
 		if (!rating.description.empty()) {
-			ratingValue["info"] = rating.description;
+			ratingValue["i"] = rating.description;
 		}
 	}
 }
@@ -89,7 +100,7 @@ std::unordered_map<int, std::string> DataManager::GetDescriptions() const
 {
 	std::unordered_map<int, std::string> descriptions;
 
-	const auto descriptionsValue = _value["Description"];
+	const auto& descriptionsValue = _value["Description"];
 	if (descriptionsValue.isNull() || !descriptionsValue.isObject()) {
 		return descriptions;
 	}

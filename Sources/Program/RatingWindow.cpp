@@ -54,14 +54,13 @@ void RatingWindow::MakeUi()
 {
     DataManager::DayTime dayTime = DataManager::CurrentTime();
     _dayTimeStr = TO_STRING("Day: {} {} {}", dayTime.day, dayTime.month, dayTime.year);
-
     _descriptions = _dataManager->GetDescriptions();
-    
-    day = _dataManager->GetRating(dayTime);
-    if (day.empty()) {
-        day.reserve(_descriptions.size());
 
-        for (const auto& [id, description] : _descriptions) {
+    day.reserve(_descriptions.size());
+    day = _dataManager->GetRating(dayTime);
+
+    for (const auto& [id, description] : _descriptions) {
+        if (std::find_if(day.begin(), day.end(), [id](const auto& ratingData) { return ratingData.id == id; }) == day.end()) {
             day.emplace_back(id, 0);
         }
     }
