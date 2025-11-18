@@ -37,7 +37,7 @@ bool DataManager::Save() const
 		return help::saveJson(_fileNamePath, _value);
 	}
 #else
-	return help::saveJson(_fileNamePath, _value);
+	return help::saveJson(_fileNamePath, _value, "");
 #endif
 }
 

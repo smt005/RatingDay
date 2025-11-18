@@ -15,7 +15,7 @@ public:
 	void Save() override;
 
 	void MakeUi();
-	void RateButton(int& rate, int id);
+	void RateButton(int& rate, int id, float& offset);
 
 private:
 	std::string _dayTimeStr;

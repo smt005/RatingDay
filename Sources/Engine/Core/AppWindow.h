@@ -2,7 +2,10 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <memory>
+
+struct ImFont;
 
 class Window {
 public:
@@ -14,6 +17,7 @@ public:
     Window(std::string_view name)
         : _name(name)
         , _visible(true)
+        , _fullScreen(true)
     {};
 
     virtual ~Window() = default;
@@ -72,8 +76,10 @@ public:
 public:
     static int width;
     static int height;
+    static ImFont* GetFont(int size);
 
 private:
     std::vector<Window::Ptr> _windows;
+    static std::map<int, ImFont*> _largeFonts;
 };
 

@@ -28,7 +28,12 @@ void SelectorWindow::Render() {
     ImGui::EndChild();
     ImGui::Separator();
 
-    if (ImGui::Button("<<", { 100.f, 30.f })) {
+    constexpr float countButton = 3.f;
+    constexpr float spacingButton = 11.f;
+    const float widthButton = static_cast<float>(AppWindow::width) / countButton - spacingButton;
+    const ImVec2 sizeButton(widthButton, 30.f);
+
+    if (ImGui::Button("<<", sizeButton)) {
         if (_currentWindow != _windows.end()) {
             if (_currentWindow != _windows.begin()) {
                 _currentWindow = std::prev(_currentWindow);
@@ -41,13 +46,13 @@ void SelectorWindow::Render() {
     
     ImGui::SameLine();
 
-    if (ImGui::Button("<>", { 100.f, 30.f })) {
+    if (ImGui::Button("<>", sizeButton)) {
         _currentWindow = _windows.begin();
     }
 
     ImGui::SameLine();
 
-    if (ImGui::Button(">>", { 100.f, 30.f })) {
+    if (ImGui::Button(">>", sizeButton)) {
         if (_currentWindow != _windows.end()) {
             _currentWindow = std::next(_currentWindow);
 

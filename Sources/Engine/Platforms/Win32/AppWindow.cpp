@@ -5,9 +5,13 @@
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_opengl3.h"
+#include <array>
+#include <filesystem>
 
 int AppWindow::width = 400;
 int AppWindow::height = 800;
+std::map<int, ImFont*> AppWindow::_largeFonts;
+
 
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -40,6 +44,12 @@ AppWindow::~AppWindow() {
 }
 
 bool AppWindow::Initialize() {
+#ifdef _DEBUG
+    constexpr auto titleWindow = L"Rating day [debug]";
+#else
+    constexpr auto titleWindow = L"Rating day";
+#endif
+
     // Регистрация класса окна (CS_OWNDC для OpenGL)
     WNDCLASSEXW wc = { 
         sizeof(wc), 
@@ -60,7 +70,7 @@ bool AppWindow::Initialize() {
     // Создание окна
     m_hWnd = ::CreateWindowW(
         wc.lpszClassName,
-        L"RatingDay",
+        titleWindow,
         WS_OVERLAPPEDWINDOW,
         200, 100, 
         600, 800,
@@ -277,4 +287,28 @@ void AppWindow::RemoveWindow(std::string_view nameWindow)
     if (it != _windows.end()) {
         _windows.erase(it);
     }
+}
+
+ImFont* AppWindow::GetFont(int size)
+{
+    if (!_largeFonts.contains(size)) {
+        static auto fontPath = "Sans.ttf";
+        if (!std::filesystem::exists(fontPath)) {
+            return nullptr;
+        }
+        
+        ImFontConfig fontCfg;
+        fontCfg.SizePixels = size;
+
+        ImGuiIO& io = ImGui::GetIO();
+        ImFont*  font = io.Fonts->AddFontFromFileTTF(fontPath, fontCfg.SizePixels, &fontCfg, io.Fonts->GetGlyphRangesCyrillic());
+
+        if (!font) {
+            return nullptr;
+        }
+
+        _largeFonts.emplace(size, font);
+    }
+
+    return _largeFonts[size];
 }

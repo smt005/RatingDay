@@ -1,11 +1,12 @@
 
 #include <iostream>
 #include <AppWindow.h>
+#include <Windows.h>
 
 int MainInternal(AppWindow& window);
 	
 int main() {
-    //FreeConsole();
+    FreeConsole();
     
     AppWindow window;
     if (!window.Initialize()) {
