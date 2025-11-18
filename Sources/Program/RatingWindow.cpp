@@ -22,7 +22,7 @@ void RatingWindow::Render() {
     const static float buttonSpaceWistrh = 200.f;
     const float widthDescription = AppWindow::width - buttonSpaceWistrh;
 
-    for (const auto& ratings : day) {
+    for (auto& ratings : day) {
         if (_descriptions.contains(ratings.id)) {
             ImGui::Text(_descriptions[ratings.id].c_str());
         }
@@ -44,25 +44,41 @@ void RatingWindow::Render() {
     }
 };
 
+void RatingWindow::Save()
+{
+    DataManager::DayTime dayTime = DataManager::CurrentTime();
+    _dataManager->SetRating(dayTime, day);
+}
+
 void RatingWindow::MakeUi()
 {
     DataManager::DayTime dayTime = DataManager::CurrentTime();
     _dayTimeStr = TO_STRING("Day: {} {} {}", dayTime.day, dayTime.month, dayTime.year);
 
-    day = _dataManager->GetRating(dayTime);
     _descriptions = _dataManager->GetDescriptions();
+    
+    day = _dataManager->GetRating(dayTime);
+    if (day.empty()) {
+        day.reserve(_descriptions.size());
+
+        for (const auto& [id, description] : _descriptions) {
+            day.emplace_back(id, 0);
+        }
+    }
 }
 
-void RatingWindow::RateButton(int rate, int id)
+void RatingWindow::RateButton(int& rate, int id)
 {
-    const static std::array<ImVec4, 6> colorButtons = { ImVec4(1.0f, 1.0f, 1.0f, 0.05f), ImVec4(0.9f, 0.0f, 0.0f, 1.f) , ImVec4(0.9f, 0.0f, 0.9f, 1.f) , ImVec4(0.0f, 0.0f, 0.9f, 1.f), ImVec4(0.0f, 0.9f, 0.9f, 1.f), ImVec4(0.0f, 0.9f, 0.0f, 1.f) };
-
-    for (int i = 1; i <= 5; ++i) {
-        const auto& colorButton = rate == i ? colorButtons[i] : colorButtons[0];
+    const static ImVec4 defColor = { 0.5f, 0.5f, 0.5f, 0.5f };
+    const static std::array<ImVec4, 3> colorButtons = { ImVec4(0.9f, 0.0f, 0.0f, 1.f) , ImVec4(0.0f, 0.0f, 0.9f, 1.f), ImVec4(0.0f, 0.9f, 0.0f, 1.f) };
+    
+    for (int i = 0; i < colorButtons.size(); ++i) {
+        const auto& colorButton = (rate >= 0 || rate < colorButtons.size()) && i == rate ? colorButtons[rate] : defColor;
 
         ImGui::PushStyleColor(ImGuiCol_Button, colorButton);
         if (ImGui::Button(TO_STRING("{}##{}", i, id).c_str(), ImVec2(20.f, 20.f))) {
             LOG("TEST: set rating {} -> {}", rate, i);
+            rate = i;
         }
         ImGui::PopStyleColor();
         ImGui::SameLine();

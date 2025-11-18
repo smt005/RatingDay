@@ -19,6 +19,7 @@ int MainInternal(AppWindow& window) {
     window.AddWindow(std::make_shared<SelectorWindow>(windows));
     window.Run();
 
+    (*windows.begin())->Save();
     dataManager->Save();
     return 0;
 }

@@ -38,30 +38,25 @@ DataManager::Day DataManager::GetRating(DayTime time) const
 	const std::string montKey = TO_STRING("{}", time.month);
 	const std::string dayKey = TO_STRING("{}", time.day);
 
-	const auto ratingsValue = _value[yearKey][montKey][dayKey];
-	if (ratingsValue.isNull() || !ratingsValue.isArray()) {
+	const auto& dayValue = _value[yearKey][montKey][dayKey];
+	if (dayValue.isNull() || !dayValue.isObject()) {
 		return ratingsDay;
 	}
 	
-	for (const auto& ratingValue : ratingsValue) {
-		const auto idValue = ratingValue["id"];
-		if (idValue.isNull() && !idValue.isInt()) {
-			continue;
-		}
-
-		const auto rateValue = ratingValue["rate"];
-		if (rateValue.isNull() && !rateValue.isInt()) {
+	for (const auto& idStr : dayValue.getMemberNames()) {
+		const auto& rateValue = dayValue[idStr]["rate"];
+		if (rateValue.isNull() || !rateValue.isInt()) {
 			continue;
 		}
 
 		RatingData& ratingData = ratingsDay.emplace_back();
 
-		ratingData.id = idValue.asInt();
+		ratingData.id = std::stoi(idStr.c_str());;
 		ratingData.rate = rateValue.asInt();
 
-		const auto descriptionValue = ratingValue["des"];
-		if (!descriptionValue.isNull() && descriptionValue.isString()) {
-			ratingData.description = descriptionValue.asCString();
+		const auto& infoValue = dayValue[idStr]["info"];
+		if (!infoValue.isNull() && infoValue.isString()) {
+			ratingData.description = infoValue.asString();
 		}
 	}
 
@@ -81,16 +76,12 @@ void DataManager::SetRating(DayTime time, const Day& ratingsDay)
 	auto& ratingsValue = _value[yearKey][montKey][dayKey];
 
 	for (const auto& rating : ratingsDay) {
-		Json::Value ratingValue;
-
-		ratingValue["id"] = rating.id;
+		Json::Value& ratingValue = ratingsValue[std::to_string(rating.id)];
 		ratingValue["rate"] = rating.rate;
 
 		if (!rating.description.empty()) {
-			ratingValue["des"] = rating.description;
+			ratingValue["info"] = rating.description;
 		}
-
-		ratingsValue.append(ratingValue);
 	}
 }
 

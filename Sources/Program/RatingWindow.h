@@ -12,9 +12,10 @@ class RatingWindow : public ContentWindow {
 public:
 	RatingWindow(std::shared_ptr<DataManager> data);
 	void Render() override;
+	void Save() override;
 
 	void MakeUi();
-	void RateButton(int rate, int id);
+	void RateButton(int& rate, int id);
 
 private:
 	std::string _dayTimeStr;
