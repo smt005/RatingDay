@@ -7,6 +7,7 @@
 #include "imgui_impl_opengl3.h"
 #include <array>
 #include <filesystem>
+#include <Help.h>
 
 int AppWindow::width = 400;
 int AppWindow::height = 800;
@@ -292,7 +293,34 @@ void AppWindow::RemoveWindow(std::string_view nameWindow)
 ImFont* AppWindow::GetFont(int size)
 {
     if (!_largeFonts.contains(size)) {
-        static auto fontPath = "Sans.ttf";
+#ifdef _DEBUG
+        static std::string fontPath = "Sans.ttf";
+
+        if (fontPath.empty()) {
+            static std::vector<std::string> fontPaths = { "Font01.otf", "Font02.otf", "Font03.otf", "Font04.otf", "Font05.otf", "Font06.otf", "Font01.ttf", "Font02.ttf", "Font03.ttf", "Font04.ttf", "Font05.ttf", "Font06.ttf", "Font07.ttf" };
+
+            Json::Value objectValue;
+            help::loadJson("Font.json", objectValue);
+            int num = 0;
+            if (!objectValue.isNull()) {
+                num = objectValue["num"].asInt();
+                if (num >= fontPaths.size()) {
+                    num = 0;
+                }
+            }
+            
+            fontPath = fontPaths[num];
+            objectValue["lastIndex"] = num;
+            objectValue["lastFont"] = fontPath;
+
+            ++num;
+            objectValue["num"] = num;
+            objectValue["lastFont"] = fontPath;
+            help::saveJson("Font.json", objectValue);
+        }
+#else
+        static const std::string fontPath = "Sans.ttf";
+#endif
         if (!std::filesystem::exists(fontPath)) {
             return nullptr;
         }
@@ -301,7 +329,7 @@ ImFont* AppWindow::GetFont(int size)
         fontCfg.SizePixels = size;
 
         ImGuiIO& io = ImGui::GetIO();
-        ImFont*  font = io.Fonts->AddFontFromFileTTF(fontPath, fontCfg.SizePixels, &fontCfg, io.Fonts->GetGlyphRangesCyrillic());
+        ImFont*  font = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), fontCfg.SizePixels, &fontCfg, io.Fonts->GetGlyphRangesCyrillic());
 
         if (!font) {
             return nullptr;
