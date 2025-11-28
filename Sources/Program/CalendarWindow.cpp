@@ -11,10 +11,9 @@
 #include "RatingWindow.h"
 #include "SelectorWindow.h"
 
-CalendarWindow::CalendarWindow(DataManager::Ptr dataManager, /*const std::weak_ptr<SelectorWindow>& selectorWindow,*/ const std::weak_ptr<RatingWindow>& ratingWindow)
-    : _dataManager(dataManager)
+CalendarWindow::CalendarWindow(/*const std::weak_ptr<SelectorWindow>& selectorWindow,*/ const std::weak_ptr<RatingWindow>& ratingWindow)
     //, _selectorWindow(selectorWindow)
-    , _ratingWindow(ratingWindow)
+    : _ratingWindow(ratingWindow)
 {
     MakeUi();
 }

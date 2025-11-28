@@ -1,9 +1,11 @@
 #pragma once
 
+#include <Windows.h>
 #include <string>
 #include <vector>
 #include <map>
 #include <memory>
+#include "Singletone.h"
 
 struct ImFont;
 
@@ -22,6 +24,7 @@ public:
 
     virtual ~Window() = default;
     virtual void Render() = 0;
+    virtual void OnClose() {};
 
     const std::string& GetName() const {
         return _name;
@@ -49,21 +52,28 @@ private:
     bool _fullScreen;
 };
 
-class WindowsManager final {
+class WindowsManager final : public Singlitone<WindowsManager> {
 public:
     WindowsManager() = default;
     ~WindowsManager() = default;
 
 public:
+    bool Initialize(HWND hWnd);
+    void Render();
+    void ShutDown();
+    bool Update(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+public:
     Window::Wptr AddWindow(Window::Ptr window);
     void RemoveWindow(std::string_view nameWindow);
-    void Render();
 
 public:
     bool m_bRunning = false;
     bool m_bFullscreen = true;
 
 public:
+    inline static const wchar_t CLASS_NAME[] = L"RatingDayWindowClass";
+    inline static const wchar_t TITLE[] = L"Rating day";
     static int width;
     static int height;
     static ImFont* GetFont(int size);

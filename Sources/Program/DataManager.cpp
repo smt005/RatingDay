@@ -5,12 +5,6 @@
 #include <Help.h>
 #include <Log.h>
 
-DataManager::DataManager(std::string_view name)
-{
-	_fileNamePath = TO_STRING("{}.json", name);
-	Load();
-}
-
 DataManager::DayTime DataManager::CurrentTime()
 {
 	const auto nowTime = std::chrono::system_clock::now();
@@ -20,8 +14,9 @@ DataManager::DayTime DataManager::CurrentTime()
 	return { currentTime->tm_mday, 1 + currentTime->tm_mon, 1900 + currentTime->tm_year };
 }
 
-bool DataManager::Load()
+bool DataManager::Load(std::string_view name)
 {
+	_fileNamePath = TO_STRING("{}.json", name);
 	return help::loadJson(_fileNamePath, _value);
 }
 

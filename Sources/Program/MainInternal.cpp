@@ -1,5 +1,4 @@
 
-#include <imgui.h>
 #include <WindowsManager.h>
 #include "ContentWindow.h"
 #include "CalendarWindow.h"
@@ -8,38 +7,17 @@
 #include "SelectorWindow.h"
 #include "DataManager.h"
 
-/*int MainInternal(WindowsManager& window) {
-    DataManager::Ptr dataManager = std::make_shared<DataManager> ("Test");
-    std::vector<ContentWindow::Ptr> windows;
-
-    const std::shared_ptr<RatingWindow> ratingWindow = std::make_shared<RatingWindow>(dataManager);
-    windows.emplace_back(ratingWindow);
-    windows.emplace_back(std::make_shared<StatisticsWindow>(dataManager));
-    windows.emplace_back(std::make_shared<CalendarWindow>(dataManager, ratingWindow));
-
-    window.AddWindow(std::make_shared<SelectorWindow>(windows));
-    window.Run();
-
-    (*windows.begin())->Save();
-    dataManager->Save();
-    return 0;
-}*/
-
-bool Initialize(WindowsManager& windowsManager)
+bool Initialize()
 {
-    DataManager::Ptr dataManager = std::make_shared<DataManager>("Test");
+    DataManager::Instance().Load("Test");
     std::vector<ContentWindow::Ptr> windows;
 
-    const std::shared_ptr<RatingWindow> ratingWindow = std::make_shared<RatingWindow>(dataManager);
+    const std::shared_ptr<RatingWindow> ratingWindow = std::make_shared<RatingWindow>();
     windows.emplace_back(ratingWindow);
-    windows.emplace_back(std::make_shared<StatisticsWindow>(dataManager));
-    windows.emplace_back(std::make_shared<CalendarWindow>(dataManager, ratingWindow));
+    windows.emplace_back(std::make_shared<StatisticsWindow>());
+    windows.emplace_back(std::make_shared<CalendarWindow>(ratingWindow));
 
-    windowsManager.AddWindow(std::make_shared<SelectorWindow>(windows));
+    WindowsManager::Instance().AddWindow(std::make_shared<SelectorWindow>(windows));
 
     return true;
-}
-
-void OnClose(WindowsManager& windowsManager)
-{
 }

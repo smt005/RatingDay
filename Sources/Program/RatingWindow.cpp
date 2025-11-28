@@ -8,8 +8,7 @@
 #include <Help.h>
 #include <ImGuiHelp.h>
 
-RatingWindow::RatingWindow(DataManager::Ptr dataManager)
-    : _dataManager(dataManager)
+RatingWindow::RatingWindow()
 {
     DataManager::DayTime dayTime = DataManager::CurrentTime();
     SelectDay(dayTime);
@@ -57,18 +56,20 @@ void RatingWindow::Render() {
 
 void RatingWindow::Save()
 {
+    DataManager::Instance().Save();
+
     DataManager::DayTime dayTime = DataManager::CurrentTime();
-    _dataManager->SetRating(dayTime, _day);
+    DataManager::Instance().SetRating(dayTime, _day);
 }
 
 void RatingWindow::SelectDay(const DataManager::DayTime& dayTime)
 {
     _dayTimeStr = TO_STRING("Day: {}.{}.{}", dayTime.day, dayTime.month, dayTime.year);
-    _descriptions = _dataManager->GetDescriptions();
+    _descriptions = DataManager::Instance().GetDescriptions();
 
     _day.clear();
     _day.reserve(_descriptions.size());
-    _day = _dataManager->GetRating(dayTime);
+    _day = DataManager::Instance().GetRating(dayTime);
 
     for (const auto& [id, description] : _descriptions) {
         if (std::find_if(_day.begin(), _day.end(), [id](const auto& ratingData) { return ratingData.id == id; }) == _day.end()) {

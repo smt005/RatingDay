@@ -7,8 +7,6 @@
 #include <unordered_map>
 #include "ContentWindow.h"
 
-class DataManager;
-
 class StatisticsWindow final : public ContentWindow {
 private:
 	struct TextData {
@@ -23,12 +21,11 @@ private:
 	};
 
 public:
-	StatisticsWindow(std::shared_ptr<DataManager> data);
+	StatisticsWindow();
 	void Render() override;
 	void MakeUi();
 
 private:
-	std::shared_ptr<DataManager> _dataManager;
 	std::string _dayTimeStr;
 	Element* _editElement = nullptr;
 	std::vector<Element> _texts;

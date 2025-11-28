@@ -6,7 +6,6 @@
 #include <unordered_map>
 #include "ContentWindow.h"
 
-class DataManager;
 //class SelectorWindow;
 class RatingWindow;
 
@@ -24,13 +23,12 @@ private:
 	};
 
 public:
-	CalendarWindow(std::shared_ptr<DataManager> data, /*const std::weak_ptr<SelectorWindow>& selectorWindow,*/ const std::weak_ptr<RatingWindow>& ratingWindow);
+	CalendarWindow(/*const std::weak_ptr<SelectorWindow>& selectorWindow,*/ const std::weak_ptr<RatingWindow>& ratingWindow);
 	void Render() override;
 	void CalendarRender();
 	void MakeUi();
 
 private:
-	std::shared_ptr<DataManager> _dataManager;
 	//std::weak_ptr<SelectorWindow> _selectorWindow;
 	std::weak_ptr<RatingWindow> _ratingWindow;
 	std::string _dayTimeStr;

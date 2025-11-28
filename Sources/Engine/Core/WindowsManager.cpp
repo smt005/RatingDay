@@ -1,12 +1,11 @@
 
 #include "WindowsManager.h"
-//#include <windows.h>
-//#include <GL/gl.h>
-#include "imgui.h"
-//#include "imgui_impl_win32.h"
-//#include "imgui_impl_opengl3.h"
-//#include <array>
+#include <windows.h>
 #include <filesystem>
+#include <GL/gl.h>
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_opengl3.h"
 #include <Help.h>
 
 int WindowsManager::width = 400;
@@ -17,7 +16,32 @@ int width;
 int height;
 bool m_bFullscreen;
 
+//Forward declare message handler from imgui_impl_win32.cpp
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+bool WindowsManager::Initialize(HWND hWnd)
+{
+    // Инициализация ImGui
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+    // Установка стиля ImGui
+    ImGui::StyleColorsDark();
+
+    // Инициализация Platform и Renderer backends для ImGui
+    ImGui_ImplWin32_InitForOpenGL(hWnd);
+    return ImGui_ImplOpenGL3_Init();
+}
+
 void WindowsManager::Render() {
+    // Начало нового кадра ImGui
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+
     for (const auto& window : _windows) {
         if (window && window->IsVisible()) {
             if (window->IsFullScreen()) {
@@ -34,6 +58,29 @@ void WindowsManager::Render() {
             ImGui::End();
         }
     }
+
+    // Завершение кадра
+    ImGui::Render();
+    glViewport(0, 0, width, height);
+    glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void WindowsManager::ShutDown()
+{
+    for (const auto& window : _windows) {
+        window->OnClose();
+    }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
+}
+
+bool WindowsManager::Update(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    return ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
 }
 
 Window::Wptr WindowsManager::AddWindow(Window::Ptr window)

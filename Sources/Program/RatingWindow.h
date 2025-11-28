@@ -11,7 +11,7 @@ class DataManager;
 
 class RatingWindow : public ContentWindow {
 public:
-	RatingWindow(std::shared_ptr<DataManager> data);
+	RatingWindow();
 	void Render() override;
 	void Save() override;
 
@@ -20,7 +20,6 @@ public:
 
 private:
 	std::string _dayTimeStr;
-	std::shared_ptr<DataManager> _dataManager;
 	std::unordered_map<int, std::string> _descriptions;
 	DataManager::Day _day;
 };

@@ -65,6 +65,11 @@ void SelectorWindow::Render() {
     }
 }
 
+void SelectorWindow::OnClose()
+{
+    (*_windows.begin())->Save();
+}
+
 void SelectorWindow::ViewRatingWindow(const DataManager::DayTime& dayTime)
 {
     _currentWindow = _windows.begin();

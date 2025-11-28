@@ -6,8 +6,7 @@
 #include <Help.h>
 #include "DataManager.h"
 
-StatisticsWindow::StatisticsWindow(DataManager::Ptr dataManager)
-    : _dataManager(dataManager)
+StatisticsWindow::StatisticsWindow()
 {
     MakeUi();
 }
@@ -57,7 +56,7 @@ void StatisticsWindow::Render() {
             DataManager::DayTime dayTime = DataManager::CurrentTime();
             LOG("Add dayTime: {} {} {}", dayTime.year, dayTime.month, dayTime.day);
 
-            _dataManager->SetRating(dayTime, day);
+            DataManager::Instance().SetRating(dayTime, day);
         }
     }
 };
@@ -67,7 +66,7 @@ void StatisticsWindow::MakeUi()
     DataManager::DayTime dayTime = DataManager::CurrentTime();
     _dayTimeStr = TO_STRING("Day: {} {} {}", dayTime.day, dayTime.month, dayTime.year);
 
-    DataManager::Day day = _dataManager->GetRating(dayTime);
+    DataManager::Day day = DataManager::Instance().GetRating(dayTime);
 
     for (const auto& ratings : day) {
         Element& element = _texts.emplace_back();

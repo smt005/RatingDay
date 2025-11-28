@@ -4,8 +4,9 @@
 #include <memory>
 #include <unordered_map>
 #include <json/json.h>
+#include "Singletone.h"
 
-class DataManager final {
+class DataManager final : public Singlitone<DataManager> {
 public:
 	using Ptr = std::shared_ptr<DataManager>;
 	using Wptr = std::weak_ptr<DataManager>;
@@ -30,13 +31,12 @@ public:
 	using Year = std::vector<std::pair<int, Months>>;
 	
 public:
-	DataManager() = delete;
-	DataManager(std::string_view name);
+	DataManager() = default;
 	~DataManager() = default;
 
 	static DayTime CurrentTime();
 
-	bool Load();
+	bool Load(std::string_view name);
 	bool Save() const;
 
 	Day GetRating(DayTime time) const;
