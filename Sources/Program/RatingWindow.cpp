@@ -4,7 +4,7 @@
 #include <iostream>
 #include <imgui.h>
 #include <Log.h>
-#include "AppWindow.h"
+#include "WindowsManager.h"
 #include <Help.h>
 #include <ImGuiHelp.h>
 
@@ -23,11 +23,11 @@ void RatingWindow::Render() {
     ImGui::Separator();
 
     const static float buttonSpaceWistrh = 110.f;
-    const float widthDescription = AppWindow::width - buttonSpaceWistrh;
+    const float widthDescription = WindowsManager::width - buttonSpaceWistrh;
     
 
     for (auto& ratings : _day) {
-        ImGuiFontHandler font(AppWindow::GetFont(24));
+        ImGuiFontHandler font(WindowsManager::GetFont(24));
 
         if (_descriptions.contains(ratings.id)) {
             ImGui::Text(_descriptions[ratings.id].c_str());

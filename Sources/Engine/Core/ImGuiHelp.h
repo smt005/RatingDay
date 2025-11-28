@@ -3,7 +3,7 @@
 #pragma once
 
 #include <imgui.h>
-#include <AppWindow.h>
+#include <WindowsManager.h>
 
 struct ImGuiFontHandler {
     ImGuiFontHandler(ImFont* _font)
@@ -15,7 +15,7 @@ struct ImGuiFontHandler {
     }
 
     ImGuiFontHandler(int size)
-        : font(AppWindow::GetFont(size))
+        : font(WindowsManager::GetFont(size))
     {
         if (font) {
             ImGui::PushFont(font);

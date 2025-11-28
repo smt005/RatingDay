@@ -7,7 +7,7 @@
 #include <Help.h>
 #include <ImGuiHelp.h>
 #include "DataManager.h"
-#include "AppWindow.h"
+#include "WindowsManager.h"
 #include "RatingWindow.h"
 #include "SelectorWindow.h"
 
@@ -86,7 +86,7 @@ void CalendarWindow::Render() {
         CalendarRender();
     }
     else if (vertical == 2) {
-        if (ImGui::Button("-##cal", { AppWindow::width - 20.f, 30.f })) {
+        if (ImGui::Button("-##cal", { WindowsManager::width - 20.f, 30.f })) {
             _testOffsetMount -= 1;
         }
 
@@ -97,7 +97,7 @@ void CalendarWindow::Render() {
         ImGui::SameLine();
 
         ImGui::Separator();
-        if (ImGui::Button("+##cal", { AppWindow::width - 20.f, 30.f })) {
+        if (ImGui::Button("+##cal", { WindowsManager::width - 20.f, 30.f })) {
             _testOffsetMount += 1;
         }
     }

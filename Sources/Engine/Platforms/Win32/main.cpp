@@ -1,28 +1,7 @@
-﻿
-/*#include <iostream>
-#include <AppWindow.h>
-#include <Windows.h>
-
-int MainInternal(AppWindow& window);
-	
-int main() {
-    FreeConsole();
-    
-    AppWindow window;
-    if (!window.Initialize()) {
-        std::cerr << "Failed to initialize window!" << std::endl;
-        return 1;
-    }
-	
-	MainInternal(window);
-
-    return 0;
-}*/
-
-// ◦ Xyz ◦
+﻿// ◦ Xyz ◦
 
 #include <windows.h>
-#include <AppWindow.h>
+#include <WindowsManager.h>
 
 #include <GL/gl.h>
 #include "imgui.h"
@@ -32,9 +11,7 @@ int main() {
 const wchar_t CLASS_NAME[] = L"BasicWindowClass";
 const int width = 400;
 const int height = 600;
-AppWindow window;
-
-//int MainInternal();
+WindowsManager windowsManager;
 
 bool CreateDeviceWGL(HDC& hDC, HGLRC& m_hRC, HWND& m_hWnd) {
     HDC hDc = ::GetDC(m_hWnd);
@@ -71,61 +48,23 @@ void CleanupDeviceWGL(HDC& hDC, HWND& m_hWnd) {
     }
 }
 
-bool Initialize(AppWindow& window);
+bool Initialize(WindowsManager& windowsManager);
 
-void Update(AppWindow& window);
+void OnClose(WindowsManager& windowsManager);
 
-void OnClose(AppWindow& window);
-
-void Render() {
-    //for (const auto& window : _windows) {
-        //if (window && window->IsVisible()) {
-            //if (window->IsFullScreen())
-            {
-                ImGui::SetNextWindowPos(ImVec2(0, 0));
-                ImGui::SetNextWindowSize(ImVec2(static_cast<float>(width), static_cast<float>(height)));
-                ImGui::Begin("window->GetName().c_str()", nullptr,
-                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
-                    ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-                    ImGuiWindowFlags_NoBringToFrontOnFocus);
-            }
-
-            ImGui::Text("Тестовый текст.");
-
-            //else {
-              //  ImGui::Begin("window->GetName().c_str()");
-            //}
-            //window->Render();
-            ImGui::End();
-        //}
-    //}
-}
 
 //Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-// Function that handles incoming window messages
-/*LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-    switch (uMsg)
-    {
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        return 0;
-    default:
-        return DefWindowProcW(hwnd, uMsg, wParam, lParam);
-    }
-}*/
-
 LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-    AppWindow* pThis = nullptr;
+    WindowsManager* pThis = nullptr;
     if (msg == WM_NCCREATE) {
         CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
-        pThis = reinterpret_cast<AppWindow*>(pCreate->lpCreateParams);
+        pThis = reinterpret_cast<WindowsManager*>(pCreate->lpCreateParams);
         ::SetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
     }
     else {
-        pThis = reinterpret_cast<AppWindow*>(::GetWindowLongPtrW(hWnd, GWLP_USERDATA));
+        pThis = reinterpret_cast<WindowsManager*>(::GetWindowLongPtrW(hWnd, GWLP_USERDATA));
     }
 
     if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
@@ -178,7 +117,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         nullptr,
         nullptr,
         hInstance,
-        &window);
+        &windowsManager);
 
     if (!hwnd)
     {
@@ -188,8 +127,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
 
     HDC hDc{};
     HGLRC m_hRC = nullptr;
-
-
 
     ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);
@@ -218,7 +155,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     ImGui_ImplWin32_InitForOpenGL(hwnd);
     ImGui_ImplOpenGL3_Init();
 
-    Initialize(window);
+    Initialize(windowsManager);
     bool running = true;
 
     MSG msg{};
@@ -235,12 +172,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
                 }
             }
 
-            //if (!running) {
-               // break;
-            //}
-
-            
-
             if (::IsIconic(hwnd)) {
                 ::Sleep(10);
                 continue;
@@ -251,9 +182,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
             ImGui_ImplWin32_NewFrame();
             ImGui::NewFrame();
 
-            // Рендеринг
-            //Render();
-            Update(window); // Отображение ImGui
+            windowsManager.Render();
 
             // Завершение кадра
             ImGui::Render();

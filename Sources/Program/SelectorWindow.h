@@ -1,6 +1,6 @@
 #pragma once
 
-#include <AppWindow.h>
+#include <WindowsManager.h>
 #include <vector>
 #include "ContentWindow.h"
 #include "DataManager.h"

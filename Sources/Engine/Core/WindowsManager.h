@@ -49,24 +49,14 @@ private:
     bool _fullScreen;
 };
 
-class AppWindow {
+class WindowsManager final {
 public:
-    AppWindow();
-    ~AppWindow();
-
-    bool Initialize();
-    void Run();
-    void Shutdown();
+    WindowsManager() = default;
+    ~WindowsManager() = default;
 
 public:
     Window::Wptr AddWindow(Window::Ptr window);
     void RemoveWindow(std::string_view nameWindow);
-
-//private:
-    bool CreateDeviceWGL();
-    void CleanupDeviceWGL();
-
-    void ProcessMessages();
     void Render();
 
 public:
