@@ -1,18 +1,20 @@
 
 #include "CalendarWindow.h"
 #include <iostream>
+#include <ctime>
 #include <imgui.h>
 #include <Log.h>
 #include <Help.h>
 #include <ImGuiHelp.h>
 #include "DataManager.h"
 #include "AppWindow.h"
-#include <ctime>
+#include "RatingWindow.h"
+#include "SelectorWindow.h"
 
-//std::vector<std::string> CalendarWindow::_days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-
-CalendarWindow::CalendarWindow(DataManager::Ptr dataManager)
+CalendarWindow::CalendarWindow(DataManager::Ptr dataManager, /*const std::weak_ptr<SelectorWindow>& selectorWindow,*/ const std::weak_ptr<RatingWindow>& ratingWindow)
     : _dataManager(dataManager)
+    //, _selectorWindow(selectorWindow)
+    , _ratingWindow(ratingWindow)
 {
     MakeUi();
 }
@@ -43,16 +45,69 @@ static int GetFirstDayOfWeek(int day, int month, int year) {
 }
 
 void CalendarWindow::Render() {
+    static int vertical = 0;
+
     {
         ImGuiFontHandler font(36);
         ImGui::TextColored({ 0.3f, 0.6f, 0.9f, 1.f }, _dayTimeStr.c_str());
+
+        if (ImGui::Button("0##cal", { 30.f, 30.f })) {
+            vertical = 0;
+        }
+        if (ImGui::Button("1##cal", { 30.f, 30.f })) {
+            vertical = 1;
+        }
+        if (ImGui::Button("2##cal", { 30.f, 30.f })) {
+            vertical = 2;
+        }
+        if (ImGui::Button("3##cal", { 30.f, 30.f })) {
+            vertical = 3;
+        }
     }
     ImGui::Separator();
 
-    // Get current date
+    
+    
+    if (vertical == 0) {
+        CalendarRender();
+    }
+    else if (vertical == 1) {
+        if (ImGui::Button("-##cal", { 30.f, 30.f })) {
+            _testOffsetMount -= 1;
+        }
+        
+        ImGui::SameLine();
+        
+        ImGui::Separator();
+        if (ImGui::Button("+##cal", { 30.f, 30.f })) {
+            _testOffsetMount += 1;
+        }
+        ImGui::SameLine();
+        CalendarRender();
+    }
+    else if (vertical == 2) {
+        if (ImGui::Button("-##cal", { AppWindow::width - 20.f, 30.f })) {
+            _testOffsetMount -= 1;
+        }
+
+        ImGui::SameLine();
+
+        CalendarRender();
+
+        ImGui::SameLine();
+
+        ImGui::Separator();
+        if (ImGui::Button("+##cal", { AppWindow::width - 20.f, 30.f })) {
+            _testOffsetMount += 1;
+        }
+    }
+}
+
+void CalendarWindow::CalendarRender()
+{
     DataManager::DayTime currentTime = DataManager::CurrentTime();
     int currentYear = currentTime.year;
-    int currentMonth = currentTime.month;
+    int currentMonth = currentTime.month + _testOffsetMount;
     int currentDay = currentTime.day;
 
     // Month names
@@ -80,7 +135,7 @@ void CalendarWindow::Render() {
     int startOffset = (firstDayOfWeek == 0) ? 6 : firstDayOfWeek - 1;
 
     // Calendar grid
-    const float cellSize = 40.0f;
+    const float cellSize = 60.0f;
     const float spacing = 2.0f;
 
     // Day names header - use invisible buttons for alignment
@@ -101,48 +156,54 @@ void CalendarWindow::Render() {
     ImGui::Spacing();
 
     // Calendar days grid
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(spacing, spacing));
-    int dayCounter = 1;
-    bool monthStarted = false;
+    {
+        ImGuiFontHandler font(34);
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(spacing, spacing));
+        int dayCounter = 1;
+        bool monthStarted = false;
 
-    for (int week = 0; week < 6; ++week) {
-        for (int dayOfWeek = 0; dayOfWeek < 7; ++dayOfWeek) {
-            if (dayOfWeek > 0) ImGui::SameLine(0, spacing);
+        for (int week = 0; week < 6; ++week) {
+            for (int dayOfWeek = 0; dayOfWeek < 7; ++dayOfWeek) {
+                if (dayOfWeek > 0) ImGui::SameLine(0, spacing);
 
-            if (!monthStarted && dayOfWeek == startOffset) {
-                monthStarted = true;
-            }
-
-            if (monthStarted && dayCounter <= daysInMonth) {
-                bool isToday = (dayCounter == currentDay);
-                ImVec4 dayColor = isToday ? ImVec4(0.3f, 0.6f, 0.9f, 1.f) : ImVec4(1.f, 1.f, 1.f, 1.f);
-                ImVec4 bgColor = isToday ? ImVec4(0.2f, 0.4f, 0.6f, 0.3f) : ImVec4(0.1f, 0.1f, 0.1f, 0.2f);
-
-                ImGui::PushStyleColor(ImGuiCol_Button, bgColor);
-                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(bgColor.x + 0.1f, bgColor.y + 0.1f, bgColor.z + 0.1f, bgColor.w));
-                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(bgColor.x + 0.2f, bgColor.y + 0.2f, bgColor.z + 0.2f, bgColor.w));
-                ImGui::PushStyleColor(ImGuiCol_Text, dayColor);
-
-                char dayStr[4];
-                snprintf(dayStr, sizeof(dayStr), "%d", dayCounter);
-
-                if (ImGui::Button(dayStr, ImVec2(cellSize, cellSize))) {
-                    LOG("Selected day: {}", dayCounter);
+                if (!monthStarted && dayOfWeek == startOffset) {
+                    monthStarted = true;
                 }
 
-                ImGui::PopStyleColor(4);
-                dayCounter++;
+                if (monthStarted && dayCounter <= daysInMonth) {
+                    bool isToday = (dayCounter == currentDay);
+                    ImVec4 dayColor = isToday ? ImVec4(0.3f, 0.6f, 0.9f, 1.f) : ImVec4(1.f, 1.f, 1.f, 1.f);
+                    ImVec4 bgColor = isToday ? ImVec4(0.2f, 0.4f, 0.6f, 0.3f) : ImVec4(0.1f, 0.1f, 0.1f, 0.2f);
+
+                    ImGui::PushStyleColor(ImGuiCol_Button, bgColor);
+                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(bgColor.x + 0.1f, bgColor.y + 0.1f, bgColor.z + 0.1f, bgColor.w));
+                    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(bgColor.x + 0.2f, bgColor.y + 0.2f, bgColor.z + 0.2f, bgColor.w));
+                    ImGui::PushStyleColor(ImGuiCol_Text, dayColor);
+
+                    char dayStr[4];
+                    snprintf(dayStr, sizeof(dayStr), "%d", dayCounter);
+
+                    if (ImGui::Button(dayStr, ImVec2(cellSize, cellSize))) {
+                        if (!_ratingWindow.expired() /*&& !_selectorWindow.expired()*/) {
+                            //_selectorWindow.lock()->ViewRatingWindow(currentTime);
+                            LOG("Selected day: {}", dayCounter);
+                        }
+                    }
+
+                    ImGui::PopStyleColor(4);
+                    dayCounter++;
+                }
+                else {
+                    // Empty cell
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.05f, 0.05f, 0.05f, 0.1f));
+                    ImGui::Button(TO_STRING(".##{}{}", week, dayOfWeek).c_str(), ImVec2(cellSize, cellSize));
+                    ImGui::PopStyleColor();
+                }
             }
-            else {
-                // Empty cell
-                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.05f, 0.05f, 0.05f, 0.1f));
-                ImGui::Button("##", ImVec2(cellSize, cellSize));
-                ImGui::PopStyleColor();
-            }
+            if (dayCounter > daysInMonth) break;
         }
-        if (dayCounter > daysInMonth) break;
+        ImGui::PopStyleVar();
     }
-    ImGui::PopStyleVar();
 };
 
 void CalendarWindow::MakeUi()

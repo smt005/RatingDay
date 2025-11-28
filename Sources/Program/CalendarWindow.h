@@ -7,6 +7,8 @@
 #include "ContentWindow.h"
 
 class DataManager;
+//class SelectorWindow;
+class RatingWindow;
 
 class CalendarWindow final : public ContentWindow {
 private:
@@ -22,13 +24,17 @@ private:
 	};
 
 public:
-	CalendarWindow(std::shared_ptr<DataManager> data);
+	CalendarWindow(std::shared_ptr<DataManager> data, /*const std::weak_ptr<SelectorWindow>& selectorWindow,*/ const std::weak_ptr<RatingWindow>& ratingWindow);
 	void Render() override;
+	void CalendarRender();
 	void MakeUi();
 
 private:
 	std::shared_ptr<DataManager> _dataManager;
+	//std::weak_ptr<SelectorWindow> _selectorWindow;
+	std::weak_ptr<RatingWindow> _ratingWindow;
 	std::string _dayTimeStr;
 	Element* _editElement = nullptr;
 	std::vector<Element> _texts;
+	int _testOffsetMount = 0;
 };

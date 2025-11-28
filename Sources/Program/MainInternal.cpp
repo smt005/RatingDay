@@ -12,9 +12,10 @@ int MainInternal(AppWindow& window) {
     DataManager::Ptr dataManager = std::make_shared<DataManager> ("Test");
     std::vector<ContentWindow::Ptr> windows;
 
-    windows.emplace_back(std::make_shared<RatingWindow>(dataManager));
+    const std::shared_ptr<RatingWindow> ratingWindow = std::make_shared<RatingWindow>(dataManager);
+    windows.emplace_back(ratingWindow);
     windows.emplace_back(std::make_shared<StatisticsWindow>(dataManager));
-    windows.emplace_back(std::make_shared<CalendarWindow>(dataManager));
+    windows.emplace_back(std::make_shared<CalendarWindow>(dataManager, ratingWindow));
 
     window.AddWindow(std::make_shared<SelectorWindow>(windows));
     window.Run();

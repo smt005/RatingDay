@@ -5,6 +5,7 @@
 #include <memory>
 #include <unordered_map>
 #include "ContentWindow.h"
+#include "DataManager.h"
 
 class DataManager;
 
@@ -14,11 +15,12 @@ public:
 	void Render() override;
 	void Save() override;
 
-	void MakeUi();
+	void SelectDay(const DataManager::DayTime& dayTime);
 	void RateButton(int& rate, int id, float& offset);
 
 private:
 	std::string _dayTimeStr;
 	std::shared_ptr<DataManager> _dataManager;
 	std::unordered_map<int, std::string> _descriptions;
+	DataManager::Day _day;
 };

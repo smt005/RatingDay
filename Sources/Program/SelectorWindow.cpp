@@ -5,6 +5,7 @@
 #include <Log.h>
 #include "DataManager.h"
 #include "ContentWindow.h"
+#include "RatingWindow.h"
 
 SelectorWindow::SelectorWindow(std::vector<ContentWindow::Ptr>& windows)
     : Window("SelectorWindow")
@@ -47,7 +48,8 @@ void SelectorWindow::Render() {
     ImGui::SameLine();
 
     if (ImGui::Button("<>", sizeButton)) {
-        _currentWindow = _windows.begin();
+        const DataManager::DayTime dayTime = DataManager::CurrentTime();
+        ViewRatingWindow(dayTime);
     }
 
     ImGui::SameLine();
@@ -58,6 +60,18 @@ void SelectorWindow::Render() {
 
             if (_currentWindow == _windows.end()) {
                 _currentWindow = _windows.begin();
+            }
+        }
+    }
+}
+
+void SelectorWindow::ViewRatingWindow(const DataManager::DayTime& dayTime)
+{
+    _currentWindow = _windows.begin();
+    if (_currentWindow != _windows.end()) {
+        if (RatingWindow* ratingWindow = dynamic_cast<RatingWindow*>((*_currentWindow).get())) {
+            if (ratingWindow) {
+                //ratingWindow->SelectDay(dayTime);
             }
         }
     }

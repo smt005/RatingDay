@@ -7,14 +7,12 @@
 #include "AppWindow.h"
 #include <Help.h>
 #include <ImGuiHelp.h>
-#include "DataManager.h"
-
-DataManager::Day day;
 
 RatingWindow::RatingWindow(DataManager::Ptr dataManager)
     : _dataManager(dataManager)
 {
-    MakeUi();
+    DataManager::DayTime dayTime = DataManager::CurrentTime();
+    SelectDay(dayTime);
 }
 
 void RatingWindow::Render() {
@@ -24,11 +22,11 @@ void RatingWindow::Render() {
     }
     ImGui::Separator();
 
-    const static float buttonSpaceWistrh = 120.f;
+    const static float buttonSpaceWistrh = 110.f;
     const float widthDescription = AppWindow::width - buttonSpaceWistrh;
     
 
-    for (auto& ratings : day) {
+    for (auto& ratings : _day) {
         ImGuiFontHandler font(AppWindow::GetFont(24));
 
         if (_descriptions.contains(ratings.id)) {
@@ -60,21 +58,21 @@ void RatingWindow::Render() {
 void RatingWindow::Save()
 {
     DataManager::DayTime dayTime = DataManager::CurrentTime();
-    _dataManager->SetRating(dayTime, day);
+    _dataManager->SetRating(dayTime, _day);
 }
 
-void RatingWindow::MakeUi()
+void RatingWindow::SelectDay(const DataManager::DayTime& dayTime)
 {
-    DataManager::DayTime dayTime = DataManager::CurrentTime();
     _dayTimeStr = TO_STRING("Day: {}.{}.{}", dayTime.day, dayTime.month, dayTime.year);
     _descriptions = _dataManager->GetDescriptions();
 
-    day.reserve(_descriptions.size());
-    day = _dataManager->GetRating(dayTime);
+    _day.clear();
+    _day.reserve(_descriptions.size());
+    _day = _dataManager->GetRating(dayTime);
 
     for (const auto& [id, description] : _descriptions) {
-        if (std::find_if(day.begin(), day.end(), [id](const auto& ratingData) { return ratingData.id == id; }) == day.end()) {
-            day.emplace_back(id, 0);
+        if (std::find_if(_day.begin(), _day.end(), [id](const auto& ratingData) { return ratingData.id == id; }) == _day.end()) {
+            _day.emplace_back(id, 0);
         }
     }
 }

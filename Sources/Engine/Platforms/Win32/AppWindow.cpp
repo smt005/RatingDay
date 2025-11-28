@@ -294,7 +294,7 @@ ImFont* AppWindow::GetFont(int size)
 {
     if (!_largeFonts.contains(size)) {
 #ifdef _DEBUG
-        static std::string fontPath = "Sans.ttf";
+        static std::string fontPath = "Sans.tt                     f";
 
         if (fontPath.empty()) {
             static std::vector<std::string> fontPaths = { "Font01.otf", "Font02.otf", "Font03.otf", "Font04.otf", "Font05.otf", "Font06.otf", "Font01.ttf", "Font02.ttf", "Font03.ttf", "Font04.ttf", "Font05.ttf", "Font06.ttf", "Font07.ttf" };
