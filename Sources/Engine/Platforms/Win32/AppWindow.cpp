@@ -15,33 +15,33 @@ std::map<int, ImFont*> AppWindow::_largeFonts;
 
 
 // Forward declare message handler from imgui_impl_win32.cpp
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
- LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+//extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+//LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-HWND m_hWnd;
-bool m_bRunning;
+//HWND m_hWnd;
+//bool m_bRunning;
 
 // OpenGL
-HDC m_hDC;
-HGLRC m_hRC;
+//HDC m_hDC;
+//HGLRC m_hRC;
 int width;
 int height;
 bool m_bFullscreen;
 
-struct WGL_WindowData {
+/*struct WGL_WindowData {
     HDC hDC;
-} m_wglData;
+} m_wglData;*/
 
 AppWindow::AppWindow() 
 {
-    m_hWnd = nullptr;
-    m_bRunning = false;
-    m_hDC = nullptr;
-    m_hRC = nullptr;
+    //m_hWnd = nullptr;
+    //m_bRunning = false;
+    //m_hDC = nullptr;
+    //m_hRC = nullptr;
 }
 
 AppWindow::~AppWindow() {
-    Shutdown();
+    //Shutdown();
 }
 
 bool AppWindow::Initialize() {
@@ -52,7 +52,7 @@ bool AppWindow::Initialize() {
 #endif
 
     // Регистрация класса окна (CS_OWNDC для OpenGL)
-    WNDCLASSEXW wc = { 
+    /*WNDCLASSEXW wc = { 
         sizeof(wc), 
         CS_OWNDC, 
         WndProc, 
@@ -115,12 +115,12 @@ bool AppWindow::Initialize() {
     ImGui_ImplWin32_InitForOpenGL(m_hWnd);
     ImGui_ImplOpenGL3_Init();
 
-    m_bRunning = true;
+    m_bRunning = true;*/
     return true;
 }
 
 void AppWindow::Run() {
-    MSG msg = {};
+    /*MSG msg = {};
     while (m_bRunning) {
         // Обработка сообщений Windows
         while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
@@ -157,7 +157,7 @@ void AppWindow::Run() {
 
         // Презентация кадра
         ::SwapBuffers(m_wglData.hDC);
-    }
+    }*/
 }
 
 void AppWindow::Render() {
@@ -180,7 +180,7 @@ void AppWindow::Render() {
 }
 
 void AppWindow::Shutdown() {
-    if (m_hWnd != nullptr) {
+    /*if (m_hWnd != nullptr) {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplWin32_Shutdown();
         ImGui::DestroyContext();
@@ -192,11 +192,11 @@ void AppWindow::Shutdown() {
         ::DestroyWindow(m_hWnd);
         ::UnregisterClassW(L"RatingDayWindowClass", GetModuleHandle(nullptr));
         m_hWnd = nullptr;
-    }
+    }*/
 }
 
 //LRESULT WINAPI AppWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+/*LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     AppWindow* pThis = nullptr;
     if (msg == WM_NCCREATE) {
         CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
@@ -231,9 +231,9 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     }
 
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
-}
+}*/
 
-bool AppWindow::CreateDeviceWGL() {
+/*bool AppWindow::CreateDeviceWGL() {
     HDC hDc = ::GetDC(m_hWnd);
     PIXELFORMATDESCRIPTOR pfd = { 0 };
     pfd.nSize = sizeof(pfd);
@@ -258,15 +258,15 @@ bool AppWindow::CreateDeviceWGL() {
         m_hRC = wglCreateContext(m_wglData.hDC);
     }
     return true;
-}
+}*/
 
-void AppWindow::CleanupDeviceWGL() {
+/*void AppWindow::CleanupDeviceWGL() {
     wglMakeCurrent(nullptr, nullptr);
     if (m_wglData.hDC) {
         ::ReleaseDC(m_hWnd, m_wglData.hDC);
         m_wglData.hDC = nullptr;
     }
-}
+}*/
 
 //........................................................................
 

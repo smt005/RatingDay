@@ -32,8 +32,9 @@ int main() {
 const wchar_t CLASS_NAME[] = L"BasicWindowClass";
 const int width = 400;
 const int height = 600;
+AppWindow window;
 
-int MainInternal(AppWindow& window);
+//int MainInternal();
 
 bool CreateDeviceWGL(HDC& hDC, HGLRC& m_hRC, HWND& m_hWnd) {
     HDC hDc = ::GetDC(m_hWnd);
@@ -70,14 +71,11 @@ void CleanupDeviceWGL(HDC& hDC, HWND& m_hWnd) {
     }
 }
 
-bool Initialize(HWND& m_hWnd)
-{
-    return true;
-}
+bool Initialize(AppWindow& window);
 
-void Update()
-{
-}
+void Update(AppWindow& window);
+
+void OnClose(AppWindow& window);
 
 void Render() {
     //for (const auto& window : _windows) {
@@ -103,8 +101,11 @@ void Render() {
     //}
 }
 
+//Forward declare message handler from imgui_impl_win32.cpp
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 // Function that handles incoming window messages
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+/*LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
@@ -114,6 +115,44 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     default:
         return DefWindowProcW(hwnd, uMsg, wParam, lParam);
     }
+}*/
+
+LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    AppWindow* pThis = nullptr;
+    if (msg == WM_NCCREATE) {
+        CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+        pThis = reinterpret_cast<AppWindow*>(pCreate->lpCreateParams);
+        ::SetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
+    }
+    else {
+        pThis = reinterpret_cast<AppWindow*>(::GetWindowLongPtrW(hWnd, GWLP_USERDATA));
+    }
+
+    if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
+        return true;
+    }
+
+    if (pThis) {
+        switch (msg) {
+        case WM_SIZE:
+            if (wParam != SIZE_MINIMIZED) {
+                pThis->width = LOWORD(lParam);
+                pThis->height = HIWORD(lParam);
+            }
+            return 0;
+        case WM_SYSCOMMAND:
+            if ((wParam & 0xfff0) == SC_KEYMENU) {
+                return 0;
+            }
+            break;
+        case WM_DESTROY:
+            pThis->m_bRunning = false;
+            ::PostQuitMessage(0);
+            return 0;
+        }
+    }
+
+    return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
@@ -139,7 +178,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         nullptr,
         nullptr,
         hInstance,
-        nullptr);
+        &window);
 
     if (!hwnd)
     {
@@ -179,6 +218,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     ImGui_ImplWin32_InitForOpenGL(hwnd);
     ImGui_ImplOpenGL3_Init();
 
+    Initialize(window);
     bool running = true;
 
     MSG msg{};
@@ -199,7 +239,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
                // break;
             //}
 
-            //Update(); // Отображение ImGui
+            
 
             if (::IsIconic(hwnd)) {
                 ::Sleep(10);
@@ -212,7 +252,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
             ImGui::NewFrame();
 
             // Рендеринг
-            Render();
+            //Render();
+            Update(window); // Отображение ImGui
 
             // Завершение кадра
             ImGui::Render();

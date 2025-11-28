@@ -62,7 +62,7 @@ public:
     Window::Wptr AddWindow(Window::Ptr window);
     void RemoveWindow(std::string_view nameWindow);
 
-private:
+//private:
     bool CreateDeviceWGL();
     void CleanupDeviceWGL();
 
