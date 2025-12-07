@@ -56,9 +56,8 @@ DataManager::Day DataManager::GetRating(DayTime time) const
 			continue;
 		}
 
-		RatingData& ratingData = ratingsDay.emplace_back();
-
-		ratingData.id = std::stoi(idStr.c_str());;
+		const int id = std::stoi(idStr.c_str());
+		RatingData& ratingData = ratingsDay.emplace_back(id);
 		ratingData.rate = rateValue.asInt();
 
 		const auto& infoValue = dayValue[idStr]["i"];

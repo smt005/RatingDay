@@ -26,7 +26,7 @@ public:
 	};
 
 	struct RatingData {
-		int id;
+		const int id;
 		int rate;
 		std::string description;
 	};

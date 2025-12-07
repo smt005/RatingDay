@@ -51,9 +51,9 @@ void Rating::Render() {
             ImGuiColorHandler style(ImGuiCol_Button, backColorWindow);
 
             if (ImGui::Button("X", ImVec2(20.f, 20.f))) {
-
-
-                LOG("TEST: edit rating {}", ratings.id);
+                ratings.rate = -1;
+                ratings.description.clear();
+                _charsInputs[iDay].Clear();
             }
         }
 
@@ -67,7 +67,6 @@ void Rating::Render() {
 
                 if (ImGui::InputText("", _charsInputs[iDay].chars, _charsInputs[iDay].size)) {
                     ratings.description = _charsInputs[iDay].chars;
-                    LOG("buf: {}", _charsInputs[iDay].chars);
                 }
             
         }

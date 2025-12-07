@@ -40,18 +40,17 @@ void Statistics::Render() {
             DataManager::Day day;
 
             for (auto& element : _texts) {
-                auto& newRating = day.emplace_back();
-                
-                {
-                    std::string str = (element.id.chars);
-                    int id = std::stoi(str.c_str());
-                    newRating.id = id;
-                }
+                std::string str = (element.id.chars);
+                int id = std::stoi(str.c_str());
+
+                auto& newRating = day.emplace_back(id);
+
                 {
                     std::string str = (element.rate.chars);
                     int rate = std::stoi(str.c_str());
                     newRating.rate = rate;
                 }
+
                 newRating.description = element.description.chars;
             }
 

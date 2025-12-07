@@ -25,7 +25,9 @@ public:
 			std::memcpy(chars, text.c_str(), size);
 			chars[size] = '\0';
 		}
-
+		void Clear() {
+			chars[0] = '\0';
+		}
 		static const size_t size = 256;
 		char chars[256];
 	};
