@@ -1,3 +1,5 @@
+﻿// ◦ Xyz ◦
+
 #pragma once
 
 #include <string>
@@ -6,7 +8,7 @@
 #include <json/json.h>
 #include "Singletone.h"
 
-class DataManager final : public Singlitone<DataManager> {
+class DataManager final : public Singletone<DataManager> {
 public:
 	using Ptr = std::shared_ptr<DataManager>;
 	using Wptr = std::weak_ptr<DataManager>;
@@ -16,6 +18,11 @@ public:
 		int day = 0;
 		int month = 0;
 		int year = 0;
+
+		bool IsValid() const
+		{
+			return year > 0 && month > 0 && day > 0;
+		}
 	};
 
 	struct RatingData {

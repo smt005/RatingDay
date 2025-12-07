@@ -5,7 +5,7 @@
 #include <imgui.h>
 #include <WindowsManager.h>
 
-struct ImGuiFontHandler {
+struct ImGuiFontHandler final {
     ImGuiFontHandler(ImFont* _font)
         : font(_font)
     {
@@ -22,7 +22,8 @@ struct ImGuiFontHandler {
         }
     }
 
-    ~ImGuiFontHandler() {
+    ~ImGuiFontHandler()
+    {
         if (font) {
             ImGui::PopFont();
         }
@@ -31,7 +32,7 @@ struct ImGuiFontHandler {
     ImFont* font;
 };
 
-struct ImGuiIdHandler {
+struct ImGuiIdHandler final {
     ImGuiIdHandler(void* _id)
         : id(_id)
     {
@@ -40,11 +41,36 @@ struct ImGuiIdHandler {
         }
     }
 
-    ~ImGuiIdHandler() {
+    ~ImGuiIdHandler()
+    {
         if (id) {
             ImGui::PopID();
         }
     }
 
     void* id;
+};
+
+struct ImGuiColorHandler final {
+    ImGuiColorHandler(ImGuiCol idx, const ImVec4& color)
+    {
+        ImGui::PushStyleColor(idx, color);
+    }
+
+    ~ImGuiColorHandler()
+    {
+        ImGui::PopStyleColor();
+    }
+};
+
+struct ImGuiWidthHandler final {
+    ImGuiWidthHandler(float width)
+    {
+        ImGui::PushItemWidth(width);
+    }
+
+    ~ImGuiWidthHandler()
+    {
+        ImGui::PopItemWidth();
+    }
 };

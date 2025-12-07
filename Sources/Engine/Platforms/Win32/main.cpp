@@ -136,7 +136,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
 
                 if (msg.message == WM_QUIT) {
                     mainLoopLooped = false;
-                    break;
                 }
             }
 
@@ -154,8 +153,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
 
         if (m_hRC) {
             wglDeleteContext(m_hRC);
-            m_hRC = nullptr;
         }
+		
         ::DestroyWindow(hwnd);
         ::UnregisterClassW(WindowsManager::CLASS_NAME, GetModuleHandle(nullptr));
     }

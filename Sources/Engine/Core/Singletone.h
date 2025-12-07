@@ -1,7 +1,7 @@
 #pragma once
 
 template <typename T>
-class Singlitone {
+class Singletone {
 public:
 	static T& Instance()
 	{

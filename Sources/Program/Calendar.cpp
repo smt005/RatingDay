@@ -1,5 +1,6 @@
+﻿// ◦ Xyz ◦
 
-#include "CalendarWindow.h"
+#include "Calendar.h"
 #include <iostream>
 #include <ctime>
 #include <imgui.h>
@@ -7,13 +8,12 @@
 #include <Help.h>
 #include <ImGuiHelp.h>
 #include "DataManager.h"
+#include "ViewManager.h"
 #include "WindowsManager.h"
-#include "RatingWindow.h"
-#include "SelectorWindow.h"
+#include "Rating.h"
+#include "MainWindow.h"
 
-CalendarWindow::CalendarWindow(/*const std::weak_ptr<SelectorWindow>& selectorWindow,*/ const std::weak_ptr<RatingWindow>& ratingWindow)
-    //, _selectorWindow(selectorWindow)
-    : _ratingWindow(ratingWindow)
+Calendar::Calendar()
 {
     MakeUi();
 }
@@ -43,7 +43,7 @@ static int GetFirstDayOfWeek(int day, int month, int year) {
     return time_in.tm_wday; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
 }
 
-void CalendarWindow::Render() {
+void Calendar::Render() {
     static int vertical = 0;
 
     {
@@ -102,7 +102,7 @@ void CalendarWindow::Render() {
     }
 }
 
-void CalendarWindow::CalendarRender()
+void Calendar::CalendarRender()
 {
     DataManager::DayTime currentTime = DataManager::CurrentTime();
     int currentYear = currentTime.year;
@@ -183,8 +183,13 @@ void CalendarWindow::CalendarRender()
                     snprintf(dayStr, sizeof(dayStr), "%d", dayCounter);
 
                     if (ImGui::Button(dayStr, ImVec2(cellSize, cellSize))) {
-                        if (!_ratingWindow.expired() /*&& !_selectorWindow.expired()*/) {
-                            //_selectorWindow.lock()->ViewRatingWindow(currentTime);
+                        if (const auto& ratingView = ViewManager::Instance().GetRatingView()) {
+                            if (ratingView->IsValidDay()) {
+                                ratingView->Save();
+                            }
+
+                            DataManager::DayTime dayTime{ dayCounter, currentMonth, currentYear };
+                            ViewManager::Instance().SetDrawRating(dayTime);
                             LOG("Selected day: {}", dayCounter);
                         }
                     }
@@ -205,7 +210,7 @@ void CalendarWindow::CalendarRender()
     }
 };
 
-void CalendarWindow::MakeUi()
+void Calendar::MakeUi()
 {
     DataManager::DayTime dayTime = DataManager::CurrentTime();
     _dayTimeStr = TO_STRING("Day: {} {} {}", dayTime.day, dayTime.month, dayTime.year);

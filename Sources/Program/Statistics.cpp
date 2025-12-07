@@ -1,17 +1,19 @@
+﻿// ◦ Xyz ◦
 
-#include "StatisticsWindow.h"
+#include "Statistics.h"
 #include <iostream>
 #include <imgui.h>
 #include <Log.h>
 #include <Help.h>
 #include "DataManager.h"
+#include "MainWindow.h"
 
-StatisticsWindow::StatisticsWindow()
+Statistics::Statistics()
 {
     MakeUi();
 }
 
-void StatisticsWindow::Render() {
+void Statistics::Render() {
     ImGui::Text(TO_STRING("Day: {} '{}'", _dayTimeStr, help::GetClassName(this)).c_str());
 
     int guiId = 0;
@@ -61,7 +63,7 @@ void StatisticsWindow::Render() {
     }
 };
 
-void StatisticsWindow::MakeUi()
+void Statistics::MakeUi()
 {
     DataManager::DayTime dayTime = DataManager::CurrentTime();
     _dayTimeStr = TO_STRING("Day: {} {} {}", dayTime.day, dayTime.month, dayTime.year);

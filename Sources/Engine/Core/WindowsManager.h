@@ -52,7 +52,7 @@ private:
     bool _fullScreen;
 };
 
-class WindowsManager final : public Singlitone<WindowsManager> {
+class WindowsManager final : public Singletone<WindowsManager> {
 public:
     WindowsManager() = default;
     ~WindowsManager() = default;

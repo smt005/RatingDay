@@ -13,11 +13,11 @@ bool help::loadJson(const std::string& fileName, Json::Value& value, bool toReso
 	Json::CharReaderBuilder readerBuilder;
 	Json::CharReader *reader = readerBuilder.newCharReader();
 	std::string err;
-	if (reader->parse(mystring.c_str(), mystring.c_str() + mystring.length(), &value, &err)) {
-		return true;
+	if (!reader->parse(mystring.c_str(), mystring.c_str() + mystring.length(), &value, &err)) {
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 bool help::saveJson(const std::string& fileName, const Json::Value& value, const std::string& indentation, bool toResource)

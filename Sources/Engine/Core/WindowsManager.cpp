@@ -8,7 +8,7 @@
 #include "imgui_impl_opengl3.h"
 #include <Help.h>
 
-int WindowsManager::width = 400;
+int WindowsManager::width = 450;
 int WindowsManager::height = 800;
 std::map<int, ImFont*> WindowsManager::_largeFonts;
 
