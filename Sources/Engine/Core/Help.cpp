@@ -30,5 +30,6 @@ std::string help::stringFroJson(const Json::Value& value, const std::string& ind
 {
 	Json::StreamWriterBuilder writerBuilder;
 	writerBuilder["indentation"] = indentation; // If you want whitespace-less output
+	writerBuilder["emitUTF8"] = true; // Output raw UTF-8 strings instead of escaping them
 	return Json::writeString(writerBuilder, value);
 }

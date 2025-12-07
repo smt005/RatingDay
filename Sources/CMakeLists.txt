@@ -58,6 +58,8 @@ if(WIN32)
         WIN32_EXECUTABLE TRUE
         LINK_FLAGS "/SUBSYSTEM:WINDOWS"
     )
+    # Добавляем флаг /utf-8 для поддержки UTF-8 в строках
+    target_compile_options(${PROJECT_NAME} PRIVATE /utf-8)
 endif()
 
 include_directories(${PROGRAM_SOURCES})

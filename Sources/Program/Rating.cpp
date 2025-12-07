@@ -90,7 +90,7 @@ bool Rating::IsValidDay()
 void Rating::SelectDay(const DataManager::DayTime& dayTime)
 {
     _dayTime = dayTime;
-    _dayTimeStr = TO_STRING("Day: {}.{}.{}", _dayTime.day, _dayTime.month, _dayTime.year);
+    _dayTimeStr = TO_STRING("День: {}.{}.{}", _dayTime.day, _dayTime.month, _dayTime.year);
 
     if (_descriptions.empty()) {
         _descriptions = DataManager::Instance().GetDescriptions();
