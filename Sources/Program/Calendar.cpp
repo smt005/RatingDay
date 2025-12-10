@@ -65,7 +65,7 @@ void Calendar::Render() {
     }
     ImGui::Separator();
 
-    
+    const auto width = WindowsManager::Instance().properties.width;
     
     if (vertical == 0) {
         CalendarRender();
@@ -85,7 +85,7 @@ void Calendar::Render() {
         CalendarRender();
     }
     else if (vertical == 2) {
-        if (ImGui::Button("-##cal", { WindowsManager::width - 20.f, 30.f })) {
+        if (ImGui::Button("-##cal", { width - 20.f, 30.f })) {
             _testOffsetMount -= 1;
         }
 
@@ -96,7 +96,7 @@ void Calendar::Render() {
         ImGui::SameLine();
 
         ImGui::Separator();
-        if (ImGui::Button("+##cal", { WindowsManager::width - 20.f, 30.f })) {
+        if (ImGui::Button("+##cal", { width - 20.f, 30.f })) {
             _testOffsetMount += 1;
         }
     }

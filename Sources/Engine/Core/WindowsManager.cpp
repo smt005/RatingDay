@@ -1,3 +1,4 @@
+п»ї// в—¦ Xyz в—¦
 
 #include "WindowsManager.h"
 #include <windows.h>
@@ -8,36 +9,30 @@
 #include "imgui_impl_opengl3.h"
 #include <Help.h>
 
-int WindowsManager::width = 450;
-int WindowsManager::height = 800;
 std::map<int, ImFont*> WindowsManager::_largeFonts;
-
-int width;
-int height;
-bool m_bFullscreen;
 
 //Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 bool WindowsManager::Initialize(HWND hWnd)
 {
-    // Инициализация ImGui
+    // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ ImGui
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
-    // Установка стиля ImGui
+    // РЈСЃС‚Р°РЅРѕРІРєР° СЃС‚РёР»СЏ ImGui
     ImGui::StyleColorsDark();
 
-    // Инициализация Platform и Renderer backends для ImGui
+    // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Platform Рё Renderer backends РґР»СЏ ImGui
     ImGui_ImplWin32_InitForOpenGL(hWnd);
     return ImGui_ImplOpenGL3_Init();
 }
 
 void WindowsManager::Render() {
-    // Начало нового кадра ImGui
+    // РќР°С‡Р°Р»Рѕ РЅРѕРІРѕРіРѕ РєР°РґСЂР° ImGui
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
@@ -46,7 +41,7 @@ void WindowsManager::Render() {
         if (window && window->IsVisible()) {
             if (window->IsFullScreen()) {
                 ImGui::SetNextWindowPos(ImVec2(0, 0));
-                ImGui::SetNextWindowSize(ImVec2(static_cast<float>(width), static_cast<float>(height)));
+                ImGui::SetNextWindowSize(ImVec2(static_cast<float>(properties.width), static_cast<float>(properties.height)));
                 ImGui::Begin(window->GetName().c_str(), nullptr, 
                     ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | 
                     ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | 
@@ -59,9 +54,9 @@ void WindowsManager::Render() {
         }
     }
 
-    // Завершение кадра
+    // Р—Р°РІРµСЂС€РµРЅРёРµ РєР°РґСЂР°
     ImGui::Render();
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, properties.width, properties.height);
     glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
     glClear(GL_COLOR_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

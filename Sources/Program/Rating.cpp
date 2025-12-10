@@ -23,7 +23,7 @@ void Rating::Render() {
 
     constexpr ImVec4 backColorWindow(0.0824f, 0.0863f, 0.0902f, 1.f);
     constexpr float buttonSpaceWistrh = 150.f;
-    const float widthDescription = WindowsManager::width - buttonSpaceWistrh;
+    const float widthDescription = WindowsManager::Instance().properties.width - buttonSpaceWistrh;
     
     const size_t countSize = _day.size();
     for (size_t iDay = 0; iDay < countSize; ++iDay) {
@@ -58,7 +58,7 @@ void Rating::Render() {
         }
 
         {
-            ImGuiFontHandler font(WindowsManager::GetFont(12));
+            ImGuiFontHandler font(WindowsManager::GetFont(16));
             ImGui::Dummy(ImVec2(0.f, 0.f));
 
                 ImGuiIdHandler idHandler(&ratings);

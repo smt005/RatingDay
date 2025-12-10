@@ -1,3 +1,5 @@
+﻿// ◦ Xyz ◦
+
 #pragma once
 
 #include <Windows.h>
@@ -8,6 +10,13 @@
 #include "Singletone.h"
 
 struct ImFont;
+
+struct WindowProperties
+{
+    std::wstring title;
+    int width = 400;
+    int height = 800;
+};
 
 class Window {
 public:
@@ -72,10 +81,11 @@ public:
     bool m_bFullscreen = true;
 
 public:
-    inline static const wchar_t CLASS_NAME[] = L"RatingDayWindowClass";
-    inline static const wchar_t TITLE[] = L"Rating day";
+    WindowProperties properties;
+    /*inline static const wchar_t CLASS_NAME[] = L"RatingDayWindowClass";
+    inline static const wchar_t TITLE[] = L"Оценка дня.";
     static int width;
-    static int height;
+    static int height;*/
     static ImFont* GetFont(int size);
 
 private:

@@ -18,11 +18,13 @@ MainWindow::MainWindow()
 }
 
 void MainWindow::Render() {
+    auto& properties = WindowsManager::Instance().properties;
+
     static bool needBorder = false;
     static const float border = 20.f;
     static const float heightButtons = 40.f;
-    const float heightList = static_cast<float>(WindowsManager::height) - heightButtons - border;
-    const float widthList = static_cast<float>(WindowsManager::width) - border;
+    const float heightList = static_cast<float>(properties.height) - heightButtons - border;
+    const float widthList = static_cast<float>(properties.width) - border;
 
     ImGui::BeginChild("List", { widthList, heightList }, needBorder);
     
@@ -35,7 +37,7 @@ void MainWindow::Render() {
 
     constexpr float countButton = 3.f;
     constexpr float spacingButton = 11.f;
-    const float widthButton = static_cast<float>(WindowsManager::width) / countButton - spacingButton;
+    const float widthButton = static_cast<float>(properties.width) / countButton - spacingButton;
     const ImVec2 sizeButton(widthButton, 30.f);
     
     if (ImGui::Button("|||", sizeButton)) {
@@ -66,5 +68,6 @@ void MainWindow::OnClose()
 
 void MainWindow::Init()
 {
+    DataManager::Instance().Load("Test");
     ViewManager::Instance().SetDrawRating(DataManager::CurrentTime());
 }

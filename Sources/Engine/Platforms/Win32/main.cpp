@@ -58,8 +58,8 @@ LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         switch (msg) {
         case WM_SIZE:
             if (wParam != SIZE_MINIMIZED) {
-                pThis->width = LOWORD(lParam);
-                pThis->height = HIWORD(lParam);
+                pThis->properties.width = LOWORD(lParam);
+                pThis->properties.height = HIWORD(lParam);
             }
             return 0;
         case WM_SYSCOMMAND:
@@ -79,12 +79,18 @@ LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
 {
+    if (!Initialize()) {
+        MessageBoxW(nullptr, L"Ошибка инициализации.", L"Ошибка", MB_OK | MB_ICONERROR);
+        return 0;
+    }
+
     WindowsManager& windowsManager = WindowsManager::Instance();
+    wchar_t CLASS_NAME[] = L"WindowClass";
 
     WNDCLASSW wc{};
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = hInstance;
-    wc.lpszClassName = WindowsManager::CLASS_NAME;
+    wc.lpszClassName = CLASS_NAME;
     wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
 
     if (!RegisterClassW(&wc))
@@ -95,10 +101,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
 
     HWND hwnd = CreateWindowExW(
         0,
-        WindowsManager::CLASS_NAME,
-        WindowsManager::TITLE,
+        CLASS_NAME,
+        windowsManager.properties.title.data(),
         WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT, WindowsManager::width, WindowsManager::height,
+        CW_USEDEFAULT, CW_USEDEFAULT, windowsManager.properties.width, windowsManager.properties.height,
         nullptr,
         nullptr,
         hInstance,
@@ -118,13 +124,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     if (!CreateDeviceWGL(hDc, m_hRC, hwnd)) {
         CleanupDeviceWGL(hDc, hwnd);
         ::DestroyWindow(hwnd);
-        ::UnregisterClassW(WindowsManager::CLASS_NAME, GetModuleHandle(nullptr));
+        ::UnregisterClassW(CLASS_NAME, GetModuleHandle(nullptr));
         return false;
     }
     wglMakeCurrent(hDc, m_hRC);
 
     windowsManager.Initialize(hwnd);
-    Initialize();
+
 
     bool mainLoopLooped = true;
     MSG msg;
@@ -156,7 +162,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         }
 		
         ::DestroyWindow(hwnd);
-        ::UnregisterClassW(WindowsManager::CLASS_NAME, GetModuleHandle(nullptr));
+        ::UnregisterClassW(CLASS_NAME, GetModuleHandle(nullptr));
     }
 
     return static_cast<int>(msg.wParam);

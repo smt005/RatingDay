@@ -6,11 +6,17 @@
 
 bool Initialize()
 {
-    DataManager::Instance().Load("Test");
-
     if (MainWindow::Ptr mainWindow = std::make_shared<MainWindow>()) {
-        WindowsManager::Instance().AddWindow(mainWindow);
+        WindowsManager& windowsManager = WindowsManager::Instance();
+
+        auto& properties = windowsManager.properties;
+        properties.title = L"Рейтинг дня";
+        properties.width = 450;
+        properties.height = 800;
+
+        windowsManager.AddWindow(mainWindow);
+        return true;
     }
 
-    return true;
+    return false;
 }
